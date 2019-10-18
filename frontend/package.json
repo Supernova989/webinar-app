@@ -1,0 +1,61 @@
+{
+	"name": "frontend",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"@emotion/core": "^10.0.21",
+		"@feathersjs/rest-client": "4.3.7",
+		"@fortawesome/fontawesome-svg-core": "1.2.25",
+		"@fortawesome/free-solid-svg-icons": "5.11.2",
+		"@fortawesome/react-fontawesome": "0.1.6",
+		"@types/jest": "24.0.19",
+		"@types/node": "12.7.12",
+		"@types/react": "16.9.6",
+		"@types/react-dom": "16.9.2",
+		"bootstrap": "4.2.1",
+		"email-validator": "2.0.4",
+		"jquery": "3.4.1",
+		"jsonwebtoken": "^8.5.1",
+		"popper.js": "1.15.0",
+		"react": "16.10.2",
+		"react-dom": "16.10.2",
+		"react-loadable": "5.5.0",
+		"react-redux": "6.0.1",
+		"react-router-dom": "5.1.2",
+		"react-scripts": "3.2.0",
+		"react-spinners": "^0.6.1",
+		"react-test-renderer": "16.10.2",
+		"reactstrap": "8.0.1",
+		"redux": "4.0.4",
+		"redux-logger": "4.0.0",
+		"redux-thunk": "2.3.0",
+		"tslint": "5.20.0",
+		"tslint-react": "4.1.0",
+		"typescript": "3.6.4"
+	},
+	"devDependencies": {
+		"node-sass": "4.12.0"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject",
+		"lint": "tslint -c tslint.json src/**/*.{ts,tsx}"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
+}

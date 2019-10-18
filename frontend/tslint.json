@@ -1,0 +1,7 @@
+{
+	"rules": {
+		"no-debugger": false,
+		"no-console": false,
+		"interface-name": false
+	}
+}

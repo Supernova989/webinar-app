@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<link rel="icon" href="%PUBLIC_URL%/favicon.ico"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<meta name="theme-color" content="#000000"/>
+	<meta
+		name="description"
+		content="Web site created using create-react-app"
+	/>
+	<link rel="apple-touch-icon" href="logo192.png"/>
+	<link rel="manifest" href="%PUBLIC_URL%/manifest.json"/>
+	<title>React App</title>
+</head>
+<body>
+<header class="header">
+	<nav class="navbar navbar-expand-md fixed-top">
+		<div class="container">
+			<a class="navbar-brand mr-4" href="/">Webinar.project</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
+					aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon">
+					<i class="fas fa-bars"></i>
+				</span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarToggle">
+				<div class="navbar-nav mr-auto">
+					<a class="nav-item nav-link" href="/app#/blog">Blog</a>
+				</div>
+				
+				<div class="navbar-nav">
+					
+					<a class="btn btn-primary  nav-item" href="/app#/login">
+						<i class="fas fa-sign-in-alt"></i> <b>Login</b>
+					</a>
+				
+				</div>
+			</div>
+		</div>
+	</nav>
+</header>
+
+<main class="main">
+	<div class="pb-3">
+		{{{ body }}}
+		<div id="appMountPoint"></div>
+	</div>
+</main>
+
+
+<!-- Footer | start -->
+<footer class="footer">
+	<div class="container clearfix">
+		<nav class="footer-nav">
+			<ul class="footer-menu">
+				<li><a href="/">Home</a></li>
+				<li><a href="/about">About</a></li>
+				<li><a href="/faq">FAQ</a></li>
+				<li><a href="/terms">Terms and conditions</a></li>
+				<li><a href="/contacts">Contacts</a></li>
+			</ul>
+		</nav>
+	</div>
+	
+	<div class="container clearfix">
+		<nav class="footer-nav">
+			
+			<ul class="social-links">
+				<li class="social-link">
+					<a title="We are on Facebook" href="https://www.facebook.com/eng.with.cyrus" target="_blank">
+						<i class="fab fa-facebook fa-2x"></i>
+					</a>
+				</li>
+				<li class="social-link">
+					<a title="We are on Youtube" href="https://youtu.be/qiLx5wFy328" target="_blank">
+						<i class="fab fa-youtube fa-2x"></i>
+					</a>
+				</li>
+				<li class="social-link">
+					<a title="We are on VKontakte" href="https://vk.com/kavboycheek" target="_blank">
+						<i class="fab fa-vk fa-2x"></i>
+					</a>
+				</li>
+				<li class="social-link">
+					<a title="We are on Instagram" href="https://www.instagram.com/kavboycheek" target="_blank">
+						<i class="fab fa-instagram fa-2x"></i>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+	
+	<div class="copyright">
+		© 2019 Webinar. All rights reserved.
+	</div>
+
+</footer>
+<!-- Footer | end   -->
+
+</body>
+</html>

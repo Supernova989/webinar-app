@@ -1,0 +1,58 @@
+{
+	"host": "localhost",
+	"port": 3050,
+	"public": "../frontend/build/",
+	"email": {
+		"enable": true,
+		"host": "",
+		"host_user": "",
+		"host_password": "",
+		"port": 587,
+		"use_tls": true,
+		"use_ssl": false
+	},
+	"zoom": {
+		"zoom_api_key": "",
+		"zoom_api_secret": "",
+		"zoom_host_id": "",
+		"zoom_host_email": ""
+	},
+	"stripe": {
+		"use_demo_mode": true,
+		"public_key": "",
+		"secret_key": "",
+		"demo_public_key": "",
+		"demo_secret_key": "",
+		"subscription_plan_id": "",
+		"subscription_price_standard": {
+			"standard": 2000
+		}
+	},
+	"paginate": {
+		"default": 10,
+		"max": 50
+	},
+	"authentication": {
+		"entity": "user",
+		"service": "api/v1/users",
+		"secret": "sdiguhasigasguvbawbvw47bvwaobvwbvsfghwO87FGqifvblwe",
+		"authStrategies": [
+			"jwt",
+			"local"
+		],
+		"jwtOptions": {
+			"header": {
+				"typ": "access"
+			},
+			"audience": "https://yourdomain.com",
+			"issuer": "application",
+			"algorithm": "HS256",
+			"expiresIn": "6h"
+		},
+		"local": {
+			"usernameField": "email",
+			"passwordField": "password"
+		}
+	},
+	"mysql": "mysql://username:password@localhost:3306/db_name"
+}

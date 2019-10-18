@@ -1,0 +1,29 @@
+$breakPointXS: 0px;
+$breakPointSM: 576px;
+$breakPointMD: 768px;
+$breakPointLG: 914px;
+$breakPointXL: 992px;
+
+
+$grid-gutter-width: 20px;
+$grid-breakpoints: (
+	xs: $breakPointXS,
+	sm: $breakPointSM,
+	md: $breakPointMD,
+	lg: $breakPointLG,
+	xl: $breakPointXL,
+);
+$container-max-widths: (
+	sm: 540px,
+	md: 720px,
+	lg: 890px,
+	xl: 960px,
+);
+
+$maxContainerWidth: 960;
+
+$innerContainerFrameBorderWidth: 0.7rem;
+$advantagesHeightInitial: 250;
+$landingHeadingBackground: #cecfd0;
+$landingHeadingTextColor: #353637;
+
