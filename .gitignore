@@ -113,4 +113,5 @@ data/
 
 config/default.json
 config/production.json
+config/test.json
 yarn.lock

@@ -4,7 +4,7 @@ const compress = require('compression');
 const helmet = require('helmet');
 const cors = require('cors');
 const logger = require('./logger');
-const routes = require('../routes/routes');
+const routes = require('./routes');
 
 const feathers = require('@feathersjs/feathers');
 const configuration = require('@feathersjs/configuration');
@@ -42,8 +42,7 @@ app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 app.use('/', routes);
 app.use('/', express.static(app.get('public')));
 
-app.use('/app/:addr', (req, res) => {
-	console.log(req.params.addr);
+app.use('/app/:addr', (req, res) => { // fallback for the Web application
 	res.redirect(`/app#${req.params.addr}`);
 });
 

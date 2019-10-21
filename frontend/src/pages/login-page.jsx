@@ -1,10 +1,12 @@
 /** @jsx jsx */
-import React, { useHook } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { css, jsx } from '@emotion/core';
+import { connect } from "react-redux";
 import {
 	Form,
 	FormGroup,
 	Label,
+	UncontrolledAlert,
 	Input,
 	FormFeedback,
 	FormText,
@@ -19,6 +21,11 @@ import {
 	faLock
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { authenticate, set_credentials } from '../actions';
+import {
+	API_ERROR_NAME_NOT_AUTHENTICATED,
+	API_GENERAL_ERROR_MESSAGE
+} from '../common';
 
 const styles = {
 	formTitle: {
@@ -48,79 +55,135 @@ const styles = {
 	formBottom: {
 		display: 'flex',
 		justifyContent: 'space-between'
+	},
+	alertArea: {
+		marginLeft: 'auto',
+		marginRight: 'auto',
+		width: 370,
+		maxWidth: '100%',
 	}
 };
 
-function LoginPage(props) {
+export function LoginPage({dispatch, history, auth}) {
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [error, setError] = useState(null);
 	
+	if (auth.token) {
+		history.push('/account')
+	}
+	
+	const onEmailChange = (e) => {
+		setEmail(e.target.value);
+	};
+	
+	const onPasswordChange = (e) => {
+		setPassword(e.target.value);
+	};
+	
+	useEffect(() => {
+		const isSupported = window && window.addEventListener;
+		if (!isSupported) return;
+		const eventName = 'keypress';
+		window.addEventListener(eventName, handleEnterPress);
+		return () => {
+			window.removeEventListener(eventName, handleEnterPress);
+		};
+	});
+	
+	useEffect(() => {
+		if (!auth.token) {
+			return;
+		}
+		console.log('HISTORY', history);
+		if (window.r) {
+			history.replace(window.r);
+			delete window.r;
+		}
+	}, [auth]);
+	
+	const submitForm = () => {
+		setError(null);
+		dispatch(authenticate(email, password))
+			.then(({accessToken, user}) => {
+				dispatch(set_credentials({token: accessToken, user}));
+				console.log('======>', {token: accessToken, user});
+				// const redirect
+				// history.push()
+			})
+			.catch(({message, name, ...rest}) => {
+				setPassword('');
+				if (name === API_ERROR_NAME_NOT_AUTHENTICATED) {
+					setError(message);
+				}
+				else {
+					setError(API_GENERAL_ERROR_MESSAGE)
+				}
+			})
+		
+	};
+	
+	function handleEnterPress({key, code}) {
+		if (key === 'Enter' || code === 'Enter') {
+			submitForm()
+		}
+	}
+	
+	const emailOK = email.length > 4;
+	const pwdOK = password.length > 4;
 	
 	return (
 		<>
-			<div css={styles.formWrap}>
+			<form css={styles.formWrap} autoComplete='off'>
+				
 				<div css={styles.formTitle}>SIGN IN</div>
-				<InputGroup className='mb-3'>
-					<InputGroupAddon addonType="prepend">
-						<InputGroupText css={{width: 44, justifyContent: 'center'}}><FontAwesomeIcon icon={faEnvelope}
-																									 color='#676767'/></InputGroupText>
-					</InputGroupAddon>
-					<Input type="email" name="email" placeholder="user@domain.com" maxLength={80}/>
-				</InputGroup>
-				
 				
 				<InputGroup className='mb-3'>
 					<InputGroupAddon addonType="prepend">
-						<InputGroupText css={{width: 44, justifyContent: 'center'}}><FontAwesomeIcon icon={faLock}
-																									 color='#676767'/></InputGroupText>
+						<InputGroupText css={{width: 44, justifyContent: 'center'}}>
+							<FontAwesomeIcon icon={faEnvelope} color='#676767'/>
+						</InputGroupText>
 					</InputGroupAddon>
-					<Input type="password" name="password" maxLength={20}/>
+					<Input type="email" name="email" placeholder="user@domain.com" onChange={onEmailChange}
+						   maxLength={80} value={email}/>
 				</InputGroup>
 				
-				<Button block color='primary'>Submit</Button>
+				<InputGroup className='mb-3'>
+					<InputGroupAddon addonType="prepend">
+						<InputGroupText css={{width: 44, justifyContent: 'center'}}>
+							<FontAwesomeIcon icon={faLock} color='#676767'/>
+						</InputGroupText>
+					</InputGroupAddon>
+					<Input type="password" name="password" maxLength={20} onChange={onPasswordChange}
+						   value={password}/>
+				</InputGroup>
+				
+				<Button block color='primary' type='button'
+						onClick={submitForm}
+						className={(emailOK && pwdOK) === true ? '' : 'disabled'}
+						disabled={(emailOK && pwdOK) === false}>Submit</Button>
+				
 				<hr/>
+				
 				<div css={styles.formBottom}>
-					<small><Link to='/register'>Don't have an account? Register</Link></small>
+					<small><Link to='/register'>Create an account</Link></small>
 					<small><Link to='/register'>Forgot password</Link></small>
 				</div>
 			
-			</div>
+			</form>
 			
-			{/*<FormFeedback>You will not be able to see this</FormFeedback>*/}
-			{/*<FormText>Example help text that remains unchanged.</FormText>*/}
+			{error && <div css={styles.alertArea}>
+				<UncontrolledAlert className='mt-2' color='danger'>{error}</UncontrolledAlert>
+			</div>}
 			
-			{/*<FormGroup>*/}
-			{/*	<Label for="exampleEmail">Valid input</Label>*/}
-			{/*	<Input valid/>*/}
-			{/*	<FormFeedback valid>Sweet! that name is available</FormFeedback>*/}
-			{/*	<FormText>Example help text that remains unchanged.</FormText>*/}
-			{/*</FormGroup>*/}
-			{/*<FormGroup>*/}
-			{/*	<Label for="examplePassword">Invalid input</Label>*/}
-			{/*	<Input invalid/>*/}
-			{/*	<FormFeedback>Oh noes! that name is already taken</FormFeedback>*/}
-			{/*	<FormText>Example help text that remains unchanged.</FormText>*/}
-			{/*</FormGroup>*/}
-			{/*<FormGroup>*/}
-			{/*	<Label for="exampleEmail">Input without validation</Label>*/}
-			{/*	<Input/>*/}
-			{/*	<FormFeedback tooltip>You will not be able to see this</FormFeedback>*/}
-			{/*	<FormText>Example help text that remains unchanged.</FormText>*/}
-			{/*</FormGroup>*/}
-			{/*<FormGroup>*/}
-			{/*	<Label for="exampleEmail">Valid input</Label>*/}
-			{/*	<Input valid/>*/}
-			{/*	<FormFeedback valid tooltip>Sweet! that name is available</FormFeedback>*/}
-			{/*	<FormText>Example help text that remains unchanged.</FormText>*/}
-			{/*</FormGroup>*/}
-			{/*<FormGroup>*/}
-			{/*	<Label for="examplePassword">Invalid input</Label>*/}
-			{/*	<Input invalid/>*/}
-			{/*	<FormFeedback tooltip>Oh noes! that name is already taken</FormFeedback>*/}
-			{/*	<FormText>Example help text that remains unchanged.</FormText>*/}
-			{/*</FormGroup>*/}
-		
 		</>
-	
 	)
 }
 
-export default LoginPage;
+function mapStatesToProps(state) {
+	return {
+		auth: state.auth
+	}
+}
+
+export default connect(mapStatesToProps)(LoginPage);

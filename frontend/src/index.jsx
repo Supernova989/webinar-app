@@ -8,6 +8,9 @@ import { Provider } from 'react-redux';
 import { HashRouter as Router } from 'react-router-dom';
 import store from './store';
 import * as serviceWorker from './serviceWorker';
+import axios from 'axios';
+
+axios.defaults.baseURL = process.env.REACT_APP_HOST;
 
 const output = <Provider store={store}><Router basename='/'><App/></Router></Provider>;
 let mountNode = 'appMountPoint';

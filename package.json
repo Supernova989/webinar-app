@@ -50,6 +50,7 @@
 		"pg": "^7.12.1",
 		"sequelize": "^5.16.0",
 		"serve-favicon": "^2.5.0",
+		"stripe": "7.10.0",
 		"winston": "^3.0.0"
 	},
 	"devDependencies": {

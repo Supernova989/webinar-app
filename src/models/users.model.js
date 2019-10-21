@@ -32,15 +32,15 @@ module.exports = function (app) {
 		},
 		is_active: {
 			type: DataTypes.BOOLEAN,
-			default: false
+			defaultValue: false
 		},
 		is_email_confirmed: {
 			type: DataTypes.BOOLEAN,
-			default: false
+			defaultValue: false
 		},
 		role: {
 			type: DataTypes.INTEGER,  // 'USER': 1, 'ASSISTANT': 2, 'ADMIN': 3
-			default: 1
+			defaultValue: 1
 		},
 		
 	}, {

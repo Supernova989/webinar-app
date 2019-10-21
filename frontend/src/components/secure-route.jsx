@@ -1,35 +1,36 @@
-import React, {Component} from 'react';
-import {Route, Redirect} from 'react-router-dom';
-import {connect} from 'react-redux';
+import React, {useEffect} from 'react';
+import { Redirect, Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import jwt from 'jsonwebtoken';
+import { log_out } from "../actions";
 
 
-function SecureRoute({path, component, roles = []}) {
-	class ProtectedComponent extends Component {
-		getRules() {
+function SecureRoute({path, component, roles = [], dispatch, auth}) {
+	
+	function ProtectedComponent(props) {
+		const C = component;
+		const redirectToLogin = <Redirect path={path} to={`/login?r=${path}`}/>;
 		
+		if (!props.auth.token) {
+			if (window) {
+				window.r = path;
+			}
+			return redirectToLogin;
 		}
-		render() {
-			const C = component;
-			const redirectToLogin = <Redirect path={path} to={`/login?r=${path}`}/>;
 		
-			if (!this.props.auth.token) {
-				return redirectToLogin;
-			}
-			
-			const decoded = jwt.decode(this.props.auth.token);
-			if (!decoded) {
-				// todo: use an Action to remove
-				localStorage.removeItem('token');
-				return redirectToLogin;
-			}
-			// console.log('token in LOCAL ', this.props.auth.token);
-			// console.log('token: ', decoded);
-			
-			// todo check permissions via indexOf
-			return <Route path={path} exact component={() => <C/>}/>
+		const decoded = jwt.decode(props.auth.token);
+		if (!decoded) {
+			dispatch(log_out());
+			return redirectToLogin;
 		}
+		
+		if (roles.length > 0 && roles.indexOf(decoded.role) === -1) {
+			console.log('decoded', decoded);
+			// render NoRights page
+		}
+		
+		return <Route path={path} exact component={() => <C/>}/>
 	}
 	
 	const PC = connect(mapStateToProps)(ProtectedComponent);
@@ -48,4 +49,4 @@ function mapStateToProps(state) {
 	};
 }
 
-export default SecureRoute;
+export default connect(mapStateToProps)(SecureRoute);
