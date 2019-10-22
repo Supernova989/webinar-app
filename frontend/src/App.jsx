@@ -51,7 +51,6 @@ function App() {
 export function PageLoaderSpinner(props) {
 	const {error, pastDelay} = props;
 	if (error) {
-		console.log(props.error);
 		return <div>Error! <button onClick={props.retry}>Retry</button></div>;
 	} else if (pastDelay) {
 		return <GridLoader css={css`display: block;`}

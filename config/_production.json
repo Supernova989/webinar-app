@@ -12,6 +12,7 @@
 		"use_ssl": false
 	},
 	"zoom": {
+		"fetch_delay": 40,
 		"zoom_api_key": "",
 		"zoom_api_secret": "",
 		"zoom_host_id": "",

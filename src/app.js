@@ -42,7 +42,8 @@ app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 app.use('/', routes);
 app.use('/', express.static(app.get('public')));
 
-app.use('/app/:addr', (req, res) => { // fallback for the Web application
+app.use('/app:addr', (req, res) => { // fallback for the Web application
+	console.log('Redirecting to: ', req.params.addr);
 	res.redirect(`/app#${req.params.addr}`);
 });
 
