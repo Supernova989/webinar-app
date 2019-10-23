@@ -1,8 +1,10 @@
-// Application hooks that run for every service
+const requireHeader = require('./hooks/require-header');
 
 module.exports = {
 	before: {
-		all: [],
+		all: [
+			requireHeader(),
+		],
 		find: [],
 		get: [],
 		create: [],

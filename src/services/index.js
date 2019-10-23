@@ -17,7 +17,7 @@ module.exports = function (app) {
 	app.configure(apiV1Posts);
 	app.configure(apiV1Stripe);
 	
-	app.service('/api/v1/zoom').get('meetings').then(res => {
-		app.configure(apiV1ZoomMeetings);
-	});
+	// app.service('/api/v1/zoom').get('meetings').then(res => {
+	// 	app.configure(apiV1ZoomMeetings);
+	// });
 };

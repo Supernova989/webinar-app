@@ -1,15 +1,11 @@
 /** @jsx jsx */
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { css, jsx } from '@emotion/core';
+import React, { useState, useEffect } from 'react';
+import { jsx } from '@emotion/core';
 import { connect } from "react-redux";
+import {validate as isEmailValid}  from 'email-validator';
 import {
-	Form,
-	FormGroup,
-	Label,
 	UncontrolledAlert,
 	Input,
-	FormFeedback,
-	FormText,
 	InputGroup,
 	InputGroupAddon,
 	InputGroupText,
@@ -26,6 +22,7 @@ import {
 	API_ERROR_NAME_NOT_AUTHENTICATED,
 	API_GENERAL_ERROR_MESSAGE
 } from '../common';
+import { LOGIN_FETCH_FULFILLED } from "../actions/types";
 
 const styles = {
 	formTitle: {
@@ -95,7 +92,6 @@ export function LoginPage({dispatch, history, auth}) {
 		if (!auth.token) {
 			return;
 		}
-		console.log('HISTORY', history);
 		if (window.r) {
 			history.replace(window.r);
 			delete window.r;
@@ -107,9 +103,6 @@ export function LoginPage({dispatch, history, auth}) {
 		dispatch(authenticate(email, password))
 			.then(({accessToken, user}) => {
 				dispatch(set_credentials({token: accessToken, user}));
-				console.log('======>', {token: accessToken, user});
-				// const redirect
-				// history.push()
 			})
 			.catch(({message, name, ...rest}) => {
 				setPassword('');
@@ -120,16 +113,18 @@ export function LoginPage({dispatch, history, auth}) {
 					setError(API_GENERAL_ERROR_MESSAGE)
 				}
 			})
-		
+			.finally(() => {
+				dispatch({type: LOGIN_FETCH_FULFILLED});
+			});
 	};
 	
 	function handleEnterPress({key, code}) {
 		if (key === 'Enter' || code === 'Enter') {
-			submitForm()
+			submitForm();
 		}
 	}
 	
-	const emailOK = email.length > 4;
+	const emailOK = email.length > 4 && isEmailValid(email);
 	const pwdOK = password.length > 4;
 	
 	return (
@@ -138,37 +133,39 @@ export function LoginPage({dispatch, history, auth}) {
 				
 				<div css={styles.formTitle}>SIGN IN</div>
 				
-				<InputGroup className='mb-3'>
-					<InputGroupAddon addonType="prepend">
-						<InputGroupText css={{width: 44, justifyContent: 'center'}}>
-							<FontAwesomeIcon icon={faEnvelope} color='#676767'/>
-						</InputGroupText>
-					</InputGroupAddon>
-					<Input type="email" name="email" placeholder="user@domain.com" onChange={onEmailChange}
-						   maxLength={80} value={email}/>
-				</InputGroup>
-				
-				<InputGroup className='mb-3'>
-					<InputGroupAddon addonType="prepend">
-						<InputGroupText css={{width: 44, justifyContent: 'center'}}>
-							<FontAwesomeIcon icon={faLock} color='#676767'/>
-						</InputGroupText>
-					</InputGroupAddon>
-					<Input type="password" name="password" maxLength={20} onChange={onPasswordChange}
-						   value={password}/>
-				</InputGroup>
-				
-				<Button block color='primary' type='button'
-						onClick={submitForm}
-						className={(emailOK && pwdOK) === true ? '' : 'disabled'}
-						disabled={(emailOK && pwdOK) === false}>Submit</Button>
-				
-				<hr/>
-				
-				<div css={styles.formBottom}>
-					<small><Link to='/register'>Create an account</Link></small>
-					<small><Link to='/register'>Forgot password</Link></small>
-				</div>
+				<fieldset disabled={auth.isFetching}>
+					<InputGroup className='mb-3'>
+						<InputGroupAddon addonType="prepend">
+							<InputGroupText css={{width: 44, justifyContent: 'center'}}>
+								<FontAwesomeIcon icon={faEnvelope} color='#676767'/>
+							</InputGroupText>
+						</InputGroupAddon>
+						<Input type="email" name="email" placeholder="user@domain.com" onChange={onEmailChange}
+							   maxLength={80} value={email}/>
+					</InputGroup>
+					
+					<InputGroup className='mb-3'>
+						<InputGroupAddon addonType="prepend">
+							<InputGroupText css={{width: 44, justifyContent: 'center'}}>
+								<FontAwesomeIcon icon={faLock} color='#676767'/>
+							</InputGroupText>
+						</InputGroupAddon>
+						<Input type="password" name="password" maxLength={20} onChange={onPasswordChange}
+							   value={password}/>
+					</InputGroup>
+					
+					<Button block color='primary' type='button'
+							onClick={submitForm}
+							className={(emailOK && pwdOK) === true ? '' : 'disabled'}
+							disabled={(emailOK && pwdOK) === false}>Submit</Button>
+					
+					<hr/>
+					
+					<div css={styles.formBottom}>
+						<small><Link to='/register'>Create an account</Link></small>
+						<small><Link to='/forgot'>Forgot password</Link></small>
+					</div>
+				</fieldset>
 			
 			</form>
 			

@@ -34,7 +34,7 @@ function initZoomMeetingScheduler(zoomAPI, appInstance, instantly = false, delay
 				await appInstance.service('/api/v1/zoom-meetings').Model.update({active: false}, {where: {}});
 			}
 			catch (e) {
-				console.log('An error occurred when cleaning the ZOOM meetings table', e);
+				console.log('An error occurred when cleaning the ZOOM meetings table! ', e);
 			}
 			let errors = [];
 			meetings.forEach(async (meeting) => {

@@ -11,6 +11,7 @@ import * as serviceWorker from './serviceWorker';
 import axios from 'axios';
 
 axios.defaults.baseURL = process.env.REACT_APP_HOST;
+axios.defaults.headers['x-request-client'] = 'WEB_APP';
 
 const output = <Provider store={store}><Router basename='/'><App/></Router></Provider>;
 let mountNode = 'appMountPoint';
