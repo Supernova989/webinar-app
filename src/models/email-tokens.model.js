@@ -4,10 +4,14 @@ const DataTypes = Sequelize.DataTypes;
 module.exports = function (app) {
 	const sequelizeClient = app.get('sequelizeClient');
 	const emailTokens = sequelizeClient.define('email_tokens', {
-		text: {
+		token: {
 			type: DataTypes.STRING,
 			allowNull: false
-		}
+		},
+		used: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false
+		},
 	}, {
 		hooks: {
 			beforeCount(options) {
@@ -16,9 +20,8 @@ module.exports = function (app) {
 		}
 	});
 	
-	// eslint-disable-next-line no-unused-vars
 	emailTokens.associate = function (models) {
-	
+		emailTokens.belongsTo(models.users);
 	};
 	
 	return emailTokens;

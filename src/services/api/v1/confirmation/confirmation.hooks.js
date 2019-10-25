@@ -1,17 +1,6 @@
-const requireHeader = require('./hooks/require-header');
-const { disallow, iff } = require('feathers-hooks-common');
-const isNotPath = require('./hooks/is-not-path');
-
-const beforeAllExceptions = [
-	'api/v1/confirmation',
-	'api/v1/users',
-];
-
 module.exports = {
 	before: {
-		all: [
-			iff(isNotPath(beforeAllExceptions), requireHeader())
-		],
+		all: [],
 		find: [],
 		get: [],
 		create: [],

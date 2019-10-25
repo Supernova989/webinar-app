@@ -1,5 +1,7 @@
 const {authenticate} = require('@feathersjs/authentication').hooks;
 const {BadRequest} = require('@feathersjs/errors');
+const generateEmailToken = require('../../hooks/generate-email-token');
+const requireHeader = require('../../hooks/require-header');
 
 const {
 	hashPassword, protect
@@ -8,8 +10,14 @@ const {
 module.exports = {
 	before: {
 		all: [],
-		find: [authenticate('jwt')],
-		get: [authenticate('jwt')],
+		find: [
+			requireHeader(),
+			authenticate('jwt')
+		],
+		get: [
+			requireHeader(),
+			authenticate('jwt')
+		],
 		create: [
 			(context) => {
 				const {confirm, password} = context.data;
@@ -19,22 +27,39 @@ module.exports = {
 				return context;
 			},
 			hashPassword('password'),
-			
 		],
-		update: [hashPassword('password'), authenticate('jwt')],
-		patch: [hashPassword('password'), authenticate('jwt')],
-		remove: [authenticate('jwt')]
+		update: [
+			requireHeader(),
+			hashPassword('password'),
+			authenticate('jwt')
+		],
+		patch: [
+			requireHeader(),
+			hashPassword('password'),
+			authenticate('jwt')
+		],
+		remove: [
+			requireHeader(),
+			authenticate('jwt')
+		]
 	},
 	
 	after: {
 		all: [
-			// Make sure the password field is never sent to the client
-			// Always must be the last hook
 			protect('password')
 		],
 		find: [],
 		get: [],
-		create: [],
+		create: [
+			generateEmailToken(),
+			(context) => {
+				
+				// send a confirmation email
+				// console.log('result', context.result);
+				
+				return context;
+			},
+		],
 		update: [],
 		patch: [],
 		remove: []

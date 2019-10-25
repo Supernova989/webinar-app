@@ -32,7 +32,7 @@ module.exports = function (app) {
 		},
 		is_active: {
 			type: DataTypes.BOOLEAN,
-			defaultValue: false
+			defaultValue: true
 		},
 		is_email_confirmed: {
 			type: DataTypes.BOOLEAN,
@@ -53,8 +53,8 @@ module.exports = function (app) {
 	
 	// eslint-disable-next-line no-unused-vars
 	users.associate = function (models) {
-		// console.log(models);
 		users.hasMany(models.posts);
+		users.hasMany(models.email_tokens, {onDelete: 'cascade'});
 	};
 	return users;
 };

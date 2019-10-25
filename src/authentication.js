@@ -2,6 +2,10 @@ const {AuthenticationService, JWTStrategy} = require('@feathersjs/authentication
 const {LocalStrategy} = require('@feathersjs/authentication-local');
 const {expressOauth} = require('@feathersjs/authentication-oauth');
 const {NotAuthenticated} = require('@feathersjs/errors');
+const {
+	ERROR_EMAIL_NOT_CONFIRMED,
+	ERROR_ACCOUNT_DEACTIVATED
+} = require('./dictionary');
 
 module.exports = app => {
 	const authentication = new AuthenticationService(app);
@@ -41,10 +45,10 @@ module.exports = app => {
 				async (context) => {
 					const {result, data} = context;
 					if (!data.is_email_confirmed && data.found) {
-						throw new NotAuthenticated('You have not confirmed an email for this account.')
+						throw new NotAuthenticated(ERROR_EMAIL_NOT_CONFIRMED)
 					}
 					if (!data.is_active && data.found) {
-						throw new NotAuthenticated('Your account is deactivated')
+						throw new NotAuthenticated(ERROR_ACCOUNT_DEACTIVATED)
 					}
 					// override the User object
 					context.result.user = {

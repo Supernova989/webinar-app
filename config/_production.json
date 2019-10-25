@@ -29,6 +29,13 @@
 			"standard": 2000
 		}
 	},
+	"AWS": {
+		"S3": {
+			"access_key_id": "",
+			"secret": "",
+			"bucket": ""
+		}
+	},
 	"paginate": {
 		"default": 10,
 		"max": 50
