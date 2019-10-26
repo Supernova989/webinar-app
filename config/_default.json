@@ -25,6 +25,7 @@
 		"demo_public_key": "",
 		"demo_secret_key": "",
 		"subscription_plan_id": "",
+		"webhook_secret": "",
 		"subscription_price_standard": {
 			"standard": 2000
 		}

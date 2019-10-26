@@ -30,11 +30,26 @@ app.set('view options', { layout: 'index' });
 
 // Load app configuration
 app.configure(configuration());
+
 // Enable security, CORS, compression, favicon and body parsing
 app.use(helmet());
 app.use(cors());
 app.use(compress());
-app.use(express.json());
+
+const unless = (path, middleware) => {
+	return (req, res, next) => {
+		if (path === req.path) {
+			return next();
+		} else {
+			return middleware(req, res, next);
+		}
+	};
+};
+
+// Exclude the Stripe webhook endpoint from what bodyparser affects
+app.use(unless('/api/v1/stripe-hooks', express.json()));
+// app.use(express.json());
+
 app.use(express.urlencoded({extended: true}));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 

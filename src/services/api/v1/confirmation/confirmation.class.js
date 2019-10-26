@@ -10,7 +10,7 @@ exports.Confirmation = class Confirmation {
 		try {
 			record = await this.options.tokenService.Model.findOne({where: {token}});
 			if (!record || record.used) {
-				this.options.response.notFound = true;
+				this.options.response._data.notFound = true;
 				return;
 			}
 			const {dataValues: {id}} = record;
@@ -22,7 +22,7 @@ exports.Confirmation = class Confirmation {
 				record.used = true;
 				await record.save()
 			}
-			this.options.response.found = true;
+			this.options.response._data.found = true;
 		} catch (e) {
 			// todo handle error
 		}

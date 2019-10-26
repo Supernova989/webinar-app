@@ -44,10 +44,16 @@ module.exports = function (app) {
 		},
 		customer_id: {
 			type: DataTypes.STRING,
-			allowNull: true,
+			allowNull: true
 		}
 		
 	}, {
+		indexes: [
+			{
+				unique: true,
+				fields: ['customer_id']
+			}
+		],
 		hooks: {
 			beforeCount(options) {
 				options.raw = true;

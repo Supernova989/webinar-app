@@ -26,14 +26,16 @@ module.exports = app => {
 						return context;
 					}
 					
-					const {dataValues} = user;
-					context.data.is_email_confirmed = dataValues.is_email_confirmed;
-					context.data.is_active = dataValues.is_active;
+					context.data.is_email_confirmed = user.is_email_confirmed;
+					context.data.is_active = user.is_active;
 					context.data.found = true;
 					
 					context.params.payload = {
-						username: dataValues.username,
-						role: dataValues.role,
+						username: user.username,
+						email: user.email,
+						firstName: user.firstName,
+						lastName: user.lastName,
+						role: user.role,
 					};
 					
 					return context;
@@ -44,6 +46,7 @@ module.exports = app => {
 			create: [
 				async (context) => {
 					const {result, data} = context;
+					console.log('here =>', result, data);
 					if (!data.is_email_confirmed && data.found) {
 						throw new NotAuthenticated(ERROR_EMAIL_NOT_CONFIRMED)
 					}

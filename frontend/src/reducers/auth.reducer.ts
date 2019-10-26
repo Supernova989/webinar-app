@@ -8,6 +8,7 @@ import { TOKEN_VALUE_NAME } from "../common";
 import {Action} from 'redux';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
+import {extractFromToken} from "../common";
 
 export interface User {
 	username: string;
@@ -31,6 +32,18 @@ const defaultState: DefaultState = {
 	isFetching: false
 };
 
+if (defaultState.token) {
+	defaultState.exp = extractFromToken(defaultState.token, 'exp');
+	defaultState.user = {
+		username: extractFromToken(defaultState.token, 'username'),
+		email: extractFromToken(defaultState.token, 'email'),
+		role: extractFromToken(defaultState.token, 'role'),
+		firstName: extractFromToken(defaultState.token, 'firstName'),
+		lastName: extractFromToken(defaultState.token, 'lastName'),
+	};
+	
+}
+
 interface AuthAction extends Action {
 	payload: {
 		token: string,
@@ -44,7 +57,7 @@ const reducer = (state = defaultState, action: AuthAction) => {
 			state = {
 				...state,
 				token: action.payload.token,
-				exp: jwt.decode(action.payload.token).exp * 1000,
+				exp: extractFromToken(action.payload.token, 'exp') * 1000,
 				user: action.payload.user
 			};
 			axios.defaults.headers['Authorization'] = 'Bearer ' + <string>state.token;

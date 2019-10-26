@@ -5,6 +5,7 @@ const requireHeader = require('../../hooks/require-header');
 const getStripeCustomerID = require('../../hooks/get-customer-id');
 const require_role = require('../../hooks/require-role');
 const {ROLE_ADMIN} = require('../../constants');
+const {disallow, iff} = require('feathers-hooks-common');
 
 const {
 	hashPassword,
@@ -16,12 +17,11 @@ module.exports = {
 		all: [],
 		find: [
 			requireHeader(),
-			require_role({roles: [ROLE_ADMIN]}),
-			authenticate('jwt')
+			authenticate('jwt'),
 		],
 		get: [
 			requireHeader(),
-			// only own
+			// todo only own
 			authenticate('jwt')
 		],
 		create: [
@@ -57,7 +57,17 @@ module.exports = {
 		all: [
 			protect('password')
 		],
-		find: [],
+		find: [
+			// only admin can list user
+			iff((context) => {
+				const obj = context.params.user || context.params.payload;
+				const {role} = obj;
+				if (role === ROLE_ADMIN) {
+					return false;
+				}
+				return true;
+			}, disallow('external')),
+		],
 		get: [],
 		create: [
 			getStripeCustomerID(),
