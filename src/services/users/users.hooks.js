@@ -18,9 +18,19 @@ module.exports = {
 		find: [
 			requireHeader(),
 			authenticate('jwt'),
+			// only admin can list user
+			iff((context) => {
+				const obj = context.params.user;
+				const {role} = obj;
+				if (role === ROLE_ADMIN) {
+					return false;
+				}
+				return true;
+			}, disallow('external')),
 		],
 		get: [
 			requireHeader(),
+			authenticate('jwt'),
 			// todo only own
 			authenticate('jwt')
 		],
@@ -34,22 +44,21 @@ module.exports = {
 			},
 			hashPassword('password'),
 		],
-		update: [
-			requireHeader(),
-			// only own and certain fields when not Admin
-			hashPassword('password'),
-			authenticate('jwt')
-		],
+		update: [],
 		patch: [
 			requireHeader(),
-			// only own and certain fields when not Admin
+			/*
+			 todo:
+			   Only own and certain fields when not Admin;
+			   User cannot change his role
+			 */
 			hashPassword('password'),
 			authenticate('jwt')
 		],
 		remove: [
 			requireHeader(),
+			authenticate('jwt'),
 			require_role({roles: [ROLE_ADMIN]}),
-			authenticate('jwt')
 		]
 	},
 	
@@ -58,15 +67,7 @@ module.exports = {
 			protect('password')
 		],
 		find: [
-			// only admin can list user
-			iff((context) => {
-				const obj = context.params.user || context.params.payload;
-				const {role} = obj;
-				if (role === ROLE_ADMIN) {
-					return false;
-				}
-				return true;
-			}, disallow('external')),
+		
 		],
 		get: [],
 		create: [

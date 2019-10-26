@@ -16,7 +16,9 @@ module.exports = {
 		find: [],
 		get: [],
 		create: [],
-		update: [],
+		update: [
+			disallow(),
+		],
 		patch: [],
 		remove: []
 	},

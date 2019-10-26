@@ -3,7 +3,7 @@ const {NotAuthenticated, Forbidden} = require('@feathersjs/errors');
 module.exports = (options = {}) => {
 	return async context => {
 		const roles = options.roles || [];
-		const {payload} = context.params;
+		const {payload} = context.params.user;
 		if (!payload) {
 			throw new NotAuthenticated();
 		}
