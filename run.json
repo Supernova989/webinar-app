@@ -1,0 +1,9 @@
+{
+	"apps": [
+		{
+			"name": "WebinarApp",
+			"script": "npm",
+			"args": "run production"
+		}
+	]
+}
