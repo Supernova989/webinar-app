@@ -3,7 +3,7 @@ const crypto = require('crypto');
 module.exports = (options = {}) => {
 	return async context => {
 		const model = {
-			token: crypto.randomBytes(32).toString('hex'),
+			token: crypto.randomBytes(32).toString('hex'), // = 64 digit string
 			userId: context.result.id
 		};
 		try {

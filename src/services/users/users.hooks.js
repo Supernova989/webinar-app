@@ -2,9 +2,13 @@ const {authenticate} = require('@feathersjs/authentication').hooks;
 const {BadRequest} = require('@feathersjs/errors');
 const generateEmailToken = require('../../hooks/generate-email-token');
 const requireHeader = require('../../hooks/require-header');
+const getStripeCustomerID = require('../../hooks/get-customer-id');
+const require_role = require('../../hooks/require-role');
+const {ROLE_ADMIN} = require('../../constants');
 
 const {
-	hashPassword, protect
+	hashPassword,
+	protect
 } = require('@feathersjs/authentication-local').hooks;
 
 module.exports = {
@@ -12,10 +16,12 @@ module.exports = {
 		all: [],
 		find: [
 			requireHeader(),
+			require_role({roles: [ROLE_ADMIN]}),
 			authenticate('jwt')
 		],
 		get: [
 			requireHeader(),
+			// only own
 			authenticate('jwt')
 		],
 		create: [
@@ -30,16 +36,19 @@ module.exports = {
 		],
 		update: [
 			requireHeader(),
+			// only own and certain fields when not Admin
 			hashPassword('password'),
 			authenticate('jwt')
 		],
 		patch: [
 			requireHeader(),
+			// only own and certain fields when not Admin
 			hashPassword('password'),
 			authenticate('jwt')
 		],
 		remove: [
 			requireHeader(),
+			require_role({roles: [ROLE_ADMIN]}),
 			authenticate('jwt')
 		]
 	},
@@ -51,6 +60,7 @@ module.exports = {
 		find: [],
 		get: [],
 		create: [
+			getStripeCustomerID(),
 			generateEmailToken(),
 			(context) => {
 				

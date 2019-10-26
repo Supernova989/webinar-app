@@ -6,7 +6,8 @@ module.exports = function (app) {
 	const emailTokens = sequelizeClient.define('email_tokens', {
 		token: {
 			type: DataTypes.STRING,
-			allowNull: false
+			allowNull: false,
+			maxLength: 64
 		},
 		used: {
 			type: DataTypes.BOOLEAN,

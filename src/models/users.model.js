@@ -42,6 +42,10 @@ module.exports = function (app) {
 			type: DataTypes.INTEGER,  // 'USER': 1, 'ASSISTANT': 2, 'ADMIN': 3
 			defaultValue: 1
 		},
+		customer_id: {
+			type: DataTypes.STRING,
+			allowNull: true,
+		}
 		
 	}, {
 		hooks: {
@@ -54,6 +58,7 @@ module.exports = function (app) {
 	// eslint-disable-next-line no-unused-vars
 	users.associate = function (models) {
 		users.hasMany(models.posts);
+		users.hasMany(models.subscriptions);
 		users.hasMany(models.email_tokens, {onDelete: 'cascade'});
 	};
 	return users;
