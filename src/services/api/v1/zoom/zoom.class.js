@@ -18,17 +18,18 @@ exports.Zoom = class Zoom {
 		console.log('PARAMS', params);
 		let response = null;
 		
-		switch (id) {
-			case GET_ROUTES.MEETINGS:
-				response = this.options.zoomAPI.get_upcoming_meetings();
-				break;
-			default:
-				throw new NotFound();
-		}
+		// switch (id) {
+		// 	case GET_ROUTES.MEETINGS:
+		// 		response = this.options.zoomAPI.get_upcoming_meetings();
+		// 		break;
+		// 	default:
+		// 		throw new NotFound();
+		// }
 		return response;
 	}
 	
 	async create(data, params) {
+		console.log('PARAMS', params);
 		if (Array.isArray(data)) {
 			return Promise.all(data.map(current => this.create(current, params)));
 		}

@@ -10,16 +10,19 @@ const apiV1Confirmation = require('./api/v1/confirmation/confirmation.service.js
 const apiV1StripeHooks = require('./api/v1/stripe-hooks/stripe-hooks.service.js');
 const apiV1StripeEvents = require('./api/v1/stripe-events/stripe-events.service.js');
 
+const apiV1ZoomHooks = require('./api/v1/zoom-hooks/zoom-hooks.service.js');
+
 module.exports = function (app) {
-	app.configure(users);
-	app.configure(apiV1ZoomMeetings);
-	app.configure(apiV1Zoom);
-	app.configure(apiV1Subscriptions);
-	app.configure(apiV1Notifications);
-	app.configure(apiV1EmailTokens);
-	app.configure(apiV1Posts);
-	app.configure(apiV1Stripe);
-	app.configure(apiV1Confirmation);
-	app.configure(apiV1StripeEvents);
-	app.configure(apiV1StripeHooks);
+    app.configure(users);
+    app.configure(apiV1ZoomMeetings);
+    app.configure(apiV1Zoom);
+    app.configure(apiV1Subscriptions);
+    app.configure(apiV1Notifications);
+    app.configure(apiV1EmailTokens);
+    app.configure(apiV1Posts);
+    app.configure(apiV1Stripe);
+    app.configure(apiV1Confirmation);
+    app.configure(apiV1StripeEvents);
+    app.configure(apiV1StripeHooks);
+    app.configure(apiV1ZoomHooks);
 };

@@ -14,7 +14,7 @@ module.exports.service = function (app) {
 	const service = app.service('api/v1/zoom');
 	service.hooks(hooks);
 	
-	const meetingScheduler = initZoomMeetingScheduler(zoomAPI, app, true, app.get('zoom').fetch_delay);
+	const meetingScheduler = initZoomMeetingScheduler(zoomAPI, app, false, app.get('zoom').fetch_delay);
 };
 
 /**

@@ -16,7 +16,8 @@
 		"zoom_api_key": "",
 		"zoom_api_secret": "",
 		"zoom_host_id": "",
-		"zoom_host_email": ""
+		"zoom_host_email": "",
+		"webhook_secret": ""
 	},
 	"stripe": {
 		"use_demo_mode": true,
