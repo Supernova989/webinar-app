@@ -20,6 +20,10 @@ module.exports = {
 			authenticate('jwt'),
 			// only admin can list user
 			iff((context) => {
+				
+				if (!context.params.user) {
+					return false; // user do not exist
+				}
 				const obj = context.params.user;
 				const {role} = obj;
 				if (role === ROLE_ADMIN) {
