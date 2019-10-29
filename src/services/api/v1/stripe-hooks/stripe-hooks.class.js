@@ -3,9 +3,9 @@ const {stripe} = require('../../../../stripe');
 const config = require('config');
 const endpointSecret = config.get('stripe').webhook_secret;
 const {
-	WH_EVENT_CUSTOMER_SUBSCRIPTION_CREATED,
-	WH_EVENT_CUSTOMER_SUBSCRIPTION_UPDATED,
-	WH_EVENT_CUSTOMER_SUBSCRIPTION_DELETED
+	sWH_EVENT_CUSTOMER_SUBSCRIPTION_CREATED,
+	sWH_EVENT_CUSTOMER_SUBSCRIPTION_UPDATED,
+	sWH_EVENT_CUSTOMER_SUBSCRIPTION_DELETED
 } = require('../../../../constants');
 
 exports.StripeHooks = class StripeHooks {
@@ -35,8 +35,8 @@ exports.StripeHooks = class StripeHooks {
 		
 		// handle webhooks depending on their type
 		switch (event.type) {
-			case WH_EVENT_CUSTOMER_SUBSCRIPTION_CREATED: {
-				console.log('EVENT - :', WH_EVENT_CUSTOMER_SUBSCRIPTION_CREATED);
+			case sWH_EVENT_CUSTOMER_SUBSCRIPTION_CREATED: {
+				console.log('EVENT - :', sWH_EVENT_CUSTOMER_SUBSCRIPTION_CREATED);
 				const {
 					id: subscription_id,
 					customer: customer_id,
@@ -61,8 +61,8 @@ exports.StripeHooks = class StripeHooks {
 				break;
 			}
 			
-			case WH_EVENT_CUSTOMER_SUBSCRIPTION_UPDATED: {
-				console.log('EVENT - :', WH_EVENT_CUSTOMER_SUBSCRIPTION_UPDATED);
+			case sWH_EVENT_CUSTOMER_SUBSCRIPTION_UPDATED: {
+				console.log('EVENT - :', sWH_EVENT_CUSTOMER_SUBSCRIPTION_UPDATED);
 				const {
 					id: subscription_id,
 					customer: customer_id,
@@ -84,8 +84,8 @@ exports.StripeHooks = class StripeHooks {
 				break;
 			}
 			
-			case WH_EVENT_CUSTOMER_SUBSCRIPTION_DELETED: {
-				console.log('EVENT - :', WH_EVENT_CUSTOMER_SUBSCRIPTION_DELETED);
+			case sWH_EVENT_CUSTOMER_SUBSCRIPTION_DELETED: {
+				console.log('EVENT - :', sWH_EVENT_CUSTOMER_SUBSCRIPTION_DELETED);
 				const {
 					id: subscription_id,
 					customer: customer_id,

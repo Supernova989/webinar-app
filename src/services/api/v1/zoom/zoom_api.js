@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
+const config = require('config');
 
 class ZoomAPI {
 	api_key = '';
@@ -8,10 +9,9 @@ class ZoomAPI {
 	request = null;
 	domain = 'https://api.zoom.us';
 	
-	constructor(appInstance) {
-		this.app = appInstance;
-		this.api_key = appInstance.get('zoom').zoom_api_key;
-		this.secret = appInstance.get('zoom').zoom_api_secret;
+	constructor() {
+		this.api_key = config.get('zoom').zoom_api_key;
+		this.secret = config.get('zoom').zoom_api_secret;
 		this.headers = {
 			'User-Agent': 'Zoom-api-Jwt-Request',
 			'content-type': 'application/json',
@@ -25,7 +25,7 @@ class ZoomAPI {
 	getZoomJWT() {
 		const payload = {
 			iss: this.api_key,
-			exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365
+			exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365 * 2 // = 2 years
 		};
 		return jwt.sign(payload, this.secret, {algorithm: 'HS256'});
 	}
@@ -36,8 +36,8 @@ class ZoomAPI {
 	 * @return {Promise<Object>}
 	 */
 	get_upcoming_meetings() {
-		const pageSize = 4;
-		const url = `${this.domain}/v2/users/${this.app.get('zoom').zoom_host_id}/meetings?type=upcoming&page_size=${pageSize}`;
+		const pageSize = 6;
+		const url = `${this.domain}/v2/users/${config.get('zoom').zoom_host_id}/meetings?type=upcoming&page_size=${pageSize}`;
 		return fetch(url, {method: 'GET', headers: this.headers}).then(res => res.json());
 	}
 	
@@ -48,7 +48,7 @@ class ZoomAPI {
 	 * @return {Promise<Object>}
 	 */
 	get_meeting_details(meeting_id) {
-		const url = `${this.domain}/meetings/${meeting_id}`;
+		const url = `${this.domain}/v2/meetings/${meeting_id}`;
 		return fetch(url, {method: 'get', headers: this.headers}).then(res => res.json());
 	}
 	

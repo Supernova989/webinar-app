@@ -4,7 +4,9 @@
 	"private": true,
 	"dependencies": {
 		"@emotion/core": "10.0.22",
+		"@feathersjs/feathers": "4.3.10",
 		"@feathersjs/rest-client": "4.3.10",
+		"@feathersjs/socketio-client": "4.3.10",
 		"@fortawesome/fontawesome-svg-core": "1.2.25",
 		"@fortawesome/free-solid-svg-icons": "5.11.2",
 		"@fortawesome/react-fontawesome": "0.1.7",
@@ -32,6 +34,7 @@
 		"redux": "4.0.4",
 		"redux-logger": "4.0.0",
 		"redux-thunk": "2.3.0",
+		"socket.io-client": "2.3.0",
 		"tslint": "5.20.0",
 		"tslint-react": "4.1.0",
 		"typescript": "3.6.4"

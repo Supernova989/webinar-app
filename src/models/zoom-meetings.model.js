@@ -18,7 +18,13 @@ module.exports = function (app) {
 		},
 		topic: {
 			type: DataTypes.STRING,
-			allowNull: false
+			allowNull: false,
+			maxLength: 200
+		},
+		agenda: {
+			type: DataTypes.STRING,
+			allowNull: true,
+			maxLength: 2000
 		},
 		start_time: {
 			type: DataTypes.STRING,
@@ -31,7 +37,11 @@ module.exports = function (app) {
 		join_url: {
 			type: DataTypes.STRING,
 			allowNull: false,
-		}
+		},
+		started: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false
+		},
 	}, {
 		indexes: [
 			{

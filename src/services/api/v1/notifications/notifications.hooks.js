@@ -9,8 +9,8 @@ module.exports = {
 		find: [],
 		get: [],
 		create: [
-			authenticate('jwt'),
-			require_role({roles: [ROLE_ADMIN]})
+			// authenticate('jwt'),
+			// require_role({roles: [ROLE_ADMIN]})
 		],
 		update: [
 			authenticate('jwt'),

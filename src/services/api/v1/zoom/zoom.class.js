@@ -48,4 +48,4 @@ exports.Zoom = class Zoom {
 	async remove(id, params) {
 		return {id};
 	}
-}
+};

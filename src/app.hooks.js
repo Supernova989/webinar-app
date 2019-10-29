@@ -5,7 +5,8 @@ const isNotPath = require('./hooks/is-not-path');
 const beforeAllExceptions = [
 	'api/v1/confirmation',
 	'api/v1/users',
-	'api/v1/stripe-hooks'
+	'api/v1/stripe-hooks',
+	'api/v1/zoom-hooks',
 ];
 
 module.exports = {
@@ -13,14 +14,23 @@ module.exports = {
 		all: [
 			iff(isNotPath(beforeAllExceptions), requireHeader())
 		],
-		find: [],
-		get: [],
-		create: [],
+		find: [
+		
+		],
+		get: [
+		
+		],
+		create: [
+		
+		],
 		update: [
 			disallow(),
 		],
-		patch: [],
-		remove: []
+		patch: [
+		],
+		remove: [
+		
+		]
 	},
 	
 	after: {

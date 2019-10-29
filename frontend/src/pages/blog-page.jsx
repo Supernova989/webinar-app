@@ -1,5 +1,5 @@
 import React from 'react';
-import { getService } from "../feathers-client";
+import { getService } from "../feathers-rest";
 
 function BlogPage(props) {
 	

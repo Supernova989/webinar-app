@@ -13,7 +13,7 @@ module.exports = {
 		find: [],
 		get: [
 			disallow('external'), // only for Internal use
-			
+		
 		],
 		create: [
 			authenticate('jwt'),

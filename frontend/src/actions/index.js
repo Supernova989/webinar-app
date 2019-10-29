@@ -4,7 +4,7 @@ import {
 	LOGIN_FETCH_START,
 	LOGIN_FETCH_FULFILLED
 } from "./types";
-import { apiAuthentication, getService } from "../feathers-client";
+import { apiAuthentication, getService } from "../feathers-rest";
 
 export const log_out = () => {
 	return {

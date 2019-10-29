@@ -4,6 +4,7 @@ const generateEmailToken = require('../../hooks/generate-email-token');
 const requireHeader = require('../../hooks/require-header');
 const getStripeCustomerID = require('../../hooks/get-customer-id');
 const require_role = require('../../hooks/require-role');
+const filterDataFields = require('../../hooks/filter-data-fields');
 const {ROLE_ADMIN} = require('../../constants');
 const {disallow, iff} = require('feathers-hooks-common');
 
@@ -20,7 +21,6 @@ module.exports = {
 			authenticate('jwt'),
 			// only admin can list user
 			iff((context) => {
-				
 				if (!context.params.user) {
 					return false; // user do not exist
 				}
@@ -39,6 +39,7 @@ module.exports = {
 			authenticate('jwt')
 		],
 		create: [
+			requireHeader(),
 			(context) => {
 				const {confirm, password} = context.data;
 				if (confirm !== password) {
@@ -46,6 +47,7 @@ module.exports = {
 				}
 				return context;
 			},
+			filterDataFields('role', 'is_active', 'is_email_confirmed'),
 			hashPassword('password'),
 		],
 		update: [],

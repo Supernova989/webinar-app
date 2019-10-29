@@ -36,12 +36,35 @@ module.exports = function (app) {
 		}
 	});
 	
+	
+	app.service('/api/v1/zoom-meetings').publish('created', (data, context) => {
+		// data -  just updated object
+		console.log('channel: meeting created!');
+		return app.channel('anonymous').send({
+			'text': 'hello there created'
+		});
+	});
+	app.service('/api/v1/zoom-meetings').publish('updated', (data, context) => {
+		// data -  just updated object
+		console.log('channel: meeting updated!');
+		return app.channel('anonymous').send({
+			'text': 'hello there updated'
+		});
+	});
+	app.service('/api/v1/zoom-meetings').publish('patched', (data, context) => {
+		// data -  just updated object
+		console.log('channel: meeting patched!');
+		return app.channel('anonymous').send({
+			'text': 'hello there patched'
+		});
+	});
+	
 	// eslint-disable-next-line no-unused-vars
 	app.publish((data, hook) => {
 		// Here you can add event publishers to channels set up in `channels.js`
 		// To publish only for a specific event use `app.publish(eventname, () => {})`
 		
-		console.log('Publishing all events to all authenticated users. See `channels.js` and https://docs.feathersjs.com/api/channels.html for more information.'); // eslint-disable-line
+		// console.log('Publishing all events to all authenticated users. See `channels.js` and https://docs.feathersjs.com/api/channels.html for more information.'); // eslint-disable-line
 		
 		// e.g. to publish all service events to all authenticated users use
 		return app.channel('authenticated');

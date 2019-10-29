@@ -16,9 +16,10 @@ module.exports = function (app) {
 			unique: true,
 			maxLength: 80
 		},
-		password: {
-			type: DataTypes.STRING,
-			allowNull: false
+		uuid: {
+			type: DataTypes.UUID,
+			defaultValue: DataTypes.UUIDV4,
+			unique: true
 		},
 		firstName: {
 			type: DataTypes.STRING,
@@ -42,10 +43,15 @@ module.exports = function (app) {
 			type: DataTypes.INTEGER,  // 'USER': 1, 'ASSISTANT': 2, 'ADMIN': 3
 			defaultValue: 1
 		},
-		customer_id: {
+		customer_id: { // for Stripe
 			type: DataTypes.STRING,
+			unique: true,
 			allowNull: true
-		}
+		},
+		password: {
+			type: DataTypes.STRING,
+			allowNull: false
+		},
 		
 	}, {
 		indexes: [

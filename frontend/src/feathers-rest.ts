@@ -3,7 +3,7 @@ import feathers from '@feathersjs/feathers';
 import axios from 'axios';
 
 const app = feathers();
-const restClient = rest(process.env.REACT_APP_HOST);
+const restClient = rest(process.env.REACT_APP_HOST!);
 app.configure(restClient.axios(axios));
 
 export type ServiceNames = 'blog' | 'users';

@@ -119,7 +119,7 @@ export function LoginPage({dispatch, history, auth}) {
 	};
 	
 	function handleEnterPress({key, code}) {
-		if (key === 'Enter' || code === 'Enter') {
+		if ((key === 'Enter' || code === 'Enter') && (emailOK && pwdOK)) {
 			submitForm();
 		}
 	}
