@@ -38,6 +38,19 @@
 			"bucket": ""
 		}
 	},
+	"allowedEmailDomains": [
+		"gmail.com",
+		"yahoo.com",
+		"yandex.ru",
+		"mail.ru",
+		"mail.com",
+		"outlook.com",
+		"me.com",
+		"icloud.com",
+		"rambler.ru",
+		"protonmail.com",
+		"aol.com"
+	],
 	"paginate": {
 		"default": 10,
 		"max": 50

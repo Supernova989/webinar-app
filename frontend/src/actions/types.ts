@@ -3,4 +3,5 @@ export const LOGIN_FETCH_FULFILLED = '@AUTH/LOGIN_FETCH_FULFILLED';
 export const LOG_OUT = '@AUTH/LOG_OUT';
 export const SET_CREDENTIALS = '@AUTH/SET_CREDENTIALS';
 export const REGISTER = '@AUTH/REGISTER';
+export const FETCH_MEETINGS = '@MEETINGS/fetch';
 export const SET_ERROR = '@ERRORS/SET_ERROR';

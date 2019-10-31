@@ -1,7 +1,7 @@
 const {NotAuthenticated, Forbidden, NotFound} = require('@feathersjs/errors');
 
 const GET_ROUTES = {
-	MEETINGS: 'meetings'
+	MEETINGS: 'get_meetings'
 };
 
 exports.Zoom = class Zoom {
@@ -18,13 +18,17 @@ exports.Zoom = class Zoom {
 		console.log('PARAMS', params);
 		let response = null;
 		
-		// switch (id) {
-		// 	case GET_ROUTES.MEETINGS:
-		// 		response = this.options.zoomAPI.get_upcoming_meetings();
-		// 		break;
-		// 	default:
-		// 		throw new NotFound();
-		// }
+		switch (id) {
+			case GET_ROUTES.MEETINGS:
+				response = await this.options.zoomMeetingsService.Model.findAll({
+					where: {
+					
+					}
+				});
+				break;
+			default:
+				throw new NotFound();
+		}
 		return response;
 	}
 	

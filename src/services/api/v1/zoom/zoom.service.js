@@ -7,7 +7,8 @@ const zoomAPI = new ZoomAPI();
 
 const service = (app) => {
 	const options = {
-		zoomAPI
+		zoomAPI,
+		zoomMeetingsService: app.service('/api/v1/zoom-meetings'),
 	};
 	
 	app.use('/api/v1/zoom', new Zoom(options, app));

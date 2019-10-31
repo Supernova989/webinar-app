@@ -28,9 +28,13 @@ function SecureRoute({path, component, roles = [], dispatch, auth}) {
 		if (roles.length > 0 && roles.indexOf(decoded.role) === -1) {
 			console.log('decoded', decoded);
 			// render NoRights page
+			return <Redirect to={{
+				pathname: '/forbidden',
+				state: { blocked: true }
+			}}/>
 		}
 		
-		return <Route path={path} exact component={() => <C/>}/>
+		return <Route path={path} component={() => <C/>}/>
 	}
 	
 	const PC = connect(mapStateToProps)(ProtectedComponent);
@@ -40,7 +44,7 @@ function SecureRoute({path, component, roles = [], dispatch, auth}) {
 SecureRoute.propTypes = {
 	path: PropTypes.string.isRequired,
 	component: PropTypes.any.isRequired,
-	roles: PropTypes.arrayOf(PropTypes.Number)
+	roles: PropTypes.arrayOf(PropTypes.number)
 };
 
 function mapStateToProps(state) {

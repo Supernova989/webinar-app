@@ -9,6 +9,7 @@ process.on('unhandledRejection', (reason, p, ...rest) => {
 
 server.on('listening', () => {
 	logger.info(`Feathers application started on ${app.get('host')}:${port}`);
+	app.service('api/v1/settings').setup();
 	app.service('api/v1/zoom').fetchMeetings();
 });
 

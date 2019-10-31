@@ -6,7 +6,7 @@ const app = feathers();
 const restClient = rest(process.env.REACT_APP_HOST!);
 app.configure(restClient.axios(axios));
 
-export type ServiceNames = 'blog' | 'users';
+export type ServiceNames = 'blog' | 'users' | 'zoom';
 export type AuthenticationStrategies = 'local' | 'jwt';
 
 export function getService(name: ServiceNames, version: Number = 1) {

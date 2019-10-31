@@ -2,6 +2,7 @@ import {
 	LOG_OUT,
 	SET_CREDENTIALS,
 	LOGIN_FETCH_START,
+	FETCH_MEETINGS,
 	LOGIN_FETCH_FULFILLED
 } from "./types";
 import { apiAuthentication, getService } from "../feathers-rest";
@@ -47,6 +48,23 @@ export const register_user = (username, email, password, confirm, firstName, las
 		return userService.create(params)
 			.then((data) => {
 				return Promise.resolve(data);
+			});
+	}
+};
+
+export const set_meetings = (meetings) => {
+	return {
+		type: FETCH_MEETINGS,
+		payload: meetings
+	}
+};
+
+export const fetch_meetings = () => {
+	const zoomService = getService('zoom', 1);
+	return dispatch => {
+		return zoomService.get('get_meetings')
+			.then((meetings) => {
+				dispatch(set_meetings(meetings));
 			});
 	}
 };

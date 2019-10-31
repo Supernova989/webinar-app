@@ -1,20 +1,40 @@
 const Sequelize = require('sequelize');
 const DataTypes = Sequelize.DataTypes;
+const {BadRequest} = require('@feathersjs/errors');
+const {
+	ERROR_INVALID_EMAIL,
+	ERROR_EMAIL_DOMAIN_NOT_SUPPORTED
+} = require('../dictionary');
 
 module.exports = function (app) {
 	const sequelizeClient = app.get('sequelizeClient');
 	const users = sequelizeClient.define('users', {
 		username: {
-			type: DataTypes.STRING,
+			type: DataTypes.STRING(20),
 			allowNull: false,
 			unique: true,
-			maxLength: 20
+			validate: {
+				len: [4, 20]
+			}
 		},
 		email: {
-			type: DataTypes.STRING,
+			type: DataTypes.STRING(80),
 			allowNull: false,
 			unique: true,
-			maxLength: 80
+			validate: {
+				isEmail: {
+					msg: ERROR_INVALID_EMAIL
+				},
+				isAllowedDomain() {
+					if (this.email.indexOf('@') === -1) {
+						throw new BadRequest(ERROR_INVALID_EMAIL);
+					}
+					const domain = String(this.email.split('@')[1]).toLowerCase();
+					if (!app.get('allowedEmailDomains').find(d => d === domain)) {
+						throw new BadRequest(ERROR_EMAIL_DOMAIN_NOT_SUPPORTED);
+					}
+				}
+			}
 		},
 		uuid: {
 			type: DataTypes.UUID,
@@ -22,14 +42,21 @@ module.exports = function (app) {
 			unique: true
 		},
 		firstName: {
-			type: DataTypes.STRING,
+			type: DataTypes.STRING(64),
 			allowNull: false,
-			maxLength: 64
+			validate: {
+				len: [2, 64]
+			}
 		},
 		lastName: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			maxLength: 64
+			type: DataTypes.STRING(64),
+			allowNull: true,
+			validate: {
+				len: {
+					args: [0, 64],
+					msg: 'Field Last Name is too long.'
+				}
+			}
 		},
 		is_active: {
 			type: DataTypes.BOOLEAN,
@@ -40,11 +67,14 @@ module.exports = function (app) {
 			defaultValue: false
 		},
 		role: {
-			type: DataTypes.INTEGER,  // 'USER': 1, 'ASSISTANT': 2, 'ADMIN': 3
-			defaultValue: 1
+			type: DataTypes.INTEGER,
+			defaultValue: 1,
+			validate: {
+				is: /^[123]$/, // 'USER': 1, 'ASSISTANT': 2, 'ADMIN': 3
+			}
 		},
 		customer_id: { // for Stripe
-			type: DataTypes.STRING,
+			type: DataTypes.STRING(128),
 			unique: true,
 			allowNull: true
 		},

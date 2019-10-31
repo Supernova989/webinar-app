@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import React, { useState } from 'react';
-import { Button, Input, InputGroup, UncontrolledAlert } from "reactstrap";
+import { Button, Input, InputGroup, UncontrolledAlert, Alert } from "reactstrap";
 import { Link } from "react-router-dom";
 import { jsx } from "@emotion/core";
 import { connect } from "react-redux";
@@ -47,9 +47,28 @@ const styles = {
 		marginRight: 'auto',
 		width: 370,
 		maxWidth: '100%',
-	}
+	},
+	successWrap: {
+		position: 'relative',
+		maxWidth: '100%',
+		background: '#FFFFFF',
+		width: 450,
+		marginLeft: 'auto',
+		marginRight: 'auto',
+		border: '1px solid #cecece',
+		padding: '0.5rem 0.5rem 0.5rem 0.5rem',
+		borderRadius: '0.25em'
+	},
 };
 
+const USERNAME_MAX = 20;
+const USERNAME_MIN = 4;
+const FNAME_MIN = 2;
+const NAME_MAX = 64;
+const EMAIL_MAX = 80;
+const EMAIL_MIN = 5;
+const PWD_MAX = 20;
+const PWD_MIN = 4;
 
 function RegisterPage({dispatch, history, auth}) {
 	
@@ -59,7 +78,14 @@ function RegisterPage({dispatch, history, auth}) {
 	const [lastName, setLastName] = useState('');
 	const [password, setPassword] = useState('');
 	const [passwordConfirm, setPasswordConfirm] = useState('');
-	const [error, setError] = useState(null);
+	const [errors, setErrors] = useState([]);
+	const [success, setSuccess] = useState(false);
+	
+	const emailOK = email.length >= EMAIL_MIN && email.length <= EMAIL_MAX && isEmailValid(email);
+	const pwdOK = password.length >= PWD_MIN && passwordConfirm.length >= PWD_MIN && password.length <= PWD_MAX && passwordConfirm.length <= PWD_MAX;
+	const usrOK = username.length >= USERNAME_MIN && username.length <= USERNAME_MAX;
+	const namesOK = firstName.length >= FNAME_MIN && firstName.length <= NAME_MAX && lastName.length <= NAME_MAX;
+	const allOk = emailOK && pwdOK && namesOK && usrOK;
 	
 	if (auth.token) {
 		history.push('/account')
@@ -89,35 +115,55 @@ function RegisterPage({dispatch, history, auth}) {
 		setLastName(e.target.value);
 	};
 	
-	
 	const submitForm = () => {
-		setError(null);
-		dispatch(register_user(username, email, password, passwordConfirm, firstName, lastName))
-			.then((data) => {
-				console.log('====>', data);
-				// dispatch(set_credentials({token: accessToken, user}));
-			})
-			.catch(({message, name, ...rest}) => {
-				setPassword('');
-				setPasswordConfirm('');
-				if (name === API_ERROR_NAME_NOT_AUTHENTICATED) {
-					setError(message);
-				} else if (name === API_ERROR_BAD_REQUEST) {
-					setError(message)
-				} else {
-					setError(API_GENERAL_ERROR_MESSAGE)
-				}
-			})
-			.finally(() => {
-				dispatch({type: LOGIN_FETCH_FULFILLED});
-			});
+		if (allOk) {
+			setErrors([]);
+			dispatch(register_user(username, email, password, passwordConfirm, firstName, lastName))
+				.then((data) => {
+					console.log('====>', data);
+					// dispatch(set_credentials({token: accessToken, user}));
+					setSuccess(true);
+				})
+				.catch(({message, name, ...rest}) => {
+					setPassword('');
+					setPasswordConfirm('');
+					setErrors([]);
+					if (name === API_ERROR_NAME_NOT_AUTHENTICATED) {
+						setErrors([{id: 0, message}]);
+					} else if (name === API_ERROR_BAD_REQUEST) {
+						if (Array.isArray(rest.errors)) {
+							const errs = rest.errors.map(e => {
+								return {id: e.id, message: e.message};
+							});
+							setErrors(errs);
+						}
+					} else {
+						setErrors([{id: 0, message: API_GENERAL_ERROR_MESSAGE}]);
+					}
+				})
+				.finally(() => {
+					dispatch({type: LOGIN_FETCH_FULFILLED});
+				});
+		}
 	};
 	
+	if (success) {
+		return (
+			<>
+				<form css={styles.successWrap} autoComplete='off'>
+					<Alert color='success' className='text-center'>
+						<div className='font-weight-bold'>Congratulations!</div>
+						<p>
+							You have successfully registered your account. Please, check your email to activate it.
+						</p>
+					</Alert>
+					
+					<Button block={true} to='/account' tag={Link} color='primary'>Sing in</Button>
+				</form>
+			</>
+		)
+	}
 	
-	const emailOK = email.length > 4 && email.length < 80 && isEmailValid(email);
-	const pwdOK = password.length > 4 && password.length < 20 && passwordConfirm.length > 4 && passwordConfirm.length < 20;
-	const usrOK = username.length > 4 && username.length < 20;
-	const namesOK = firstName.length > 2 & lastName.length > 2 && firstName.length < 64 && lastName.length < 64;
 	return (
 		<>
 			<form css={styles.formWrap} autoComplete='off'>
@@ -128,41 +174,41 @@ function RegisterPage({dispatch, history, auth}) {
 					{/* First name */}
 					<InputGroup className='mb-3'>
 						<Input type="text" name="firstName" placeholder="Your First name" onChange={onFirstNameChange}
-							   maxLength={64} value={firstName}/>
+							   maxLength={NAME_MAX} value={firstName}/>
 					</InputGroup>
 					
 					{/* Last name */}
 					<InputGroup className='mb-3'>
 						<Input type="text" name="lastName" placeholder="Your Last name" onChange={onLastNameChange}
-							   maxLength={64} value={lastName}/>
+							   maxLength={NAME_MAX} value={lastName}/>
 					</InputGroup>
 					
 					{/* Username */}
 					<InputGroup className='mb-3'>
 						<Input type="text" name="username" placeholder="Your Username" onChange={onUsernameChange}
-							   maxLength={20} value={username}/>
+							   maxLength={USERNAME_MAX} value={username}/>
 					</InputGroup>
 					
 					<InputGroup className='mb-3'>
 						<Input type="email" name="email" placeholder="Your Email" onChange={onEmailChange}
-							   maxLength={80} value={email}/>
+							   maxLength={EMAIL_MAX} value={email}/>
 					</InputGroup>
 					
 					<InputGroup className='mb-3'>
 						<Input type="password" name="password" placeholder="Your Password" onChange={onPasswordChange}
-							   maxLength={20} value={password}/>
+							   maxLength={PWD_MAX} value={password}/>
 					</InputGroup>
 					
 					<InputGroup className='mb-3'>
 						<Input type="password" name="passwordConfirm" placeholder="Confirm Password"
 							   onChange={onPasswordConfirmChange}
-							   maxLength={20} value={passwordConfirm}/>
+							   maxLength={PWD_MAX} value={passwordConfirm}/>
 					</InputGroup>
 					
 					<Button block color='primary' type='button'
 							onClick={submitForm}
-							className={(emailOK && pwdOK && namesOK && usrOK) === true ? '' : 'disabled'}
-							disabled={(emailOK && pwdOK && namesOK && usrOK) === false}>Register</Button>
+							className={allOk  || !auth.isFetching ? '' : 'disabled'}
+							disabled={!allOk}>Register</Button>
 					
 					<hr/>
 					
@@ -173,10 +219,13 @@ function RegisterPage({dispatch, history, auth}) {
 			
 			</form>
 			
-			{error && <div css={styles.alertArea}>
-				<UncontrolledAlert className='mt-2' color='danger'>{error}</UncontrolledAlert>
-			</div>}
-		
+			{errors && errors.length > 0 && errors.map(e => {
+				return(
+					<div key={e.id} css={styles.alertArea}>
+						<UncontrolledAlert className='mt-2' color='danger'>{e.message}</UncontrolledAlert>
+					</div>
+				)
+			})}
 		</>
 	)
 }

@@ -10,6 +10,14 @@ import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import {extractFromToken} from "../common";
 
+
+let token = localStorage.getItem(TOKEN_VALUE_NAME);
+if (token && jwt.decode(token)) {
+	axios.defaults.headers['Authorization'] = 'Bearer ' + token;
+} else {
+	token = null;
+}
+
 export interface User {
 	username: string;
 	email: string;
@@ -26,11 +34,13 @@ interface DefaultState {
 }
 
 const defaultState: DefaultState = {
-	token: localStorage.getItem(TOKEN_VALUE_NAME),
+	token: token,
 	exp: null,
 	user: null,
 	isFetching: false
 };
+
+
 
 if (defaultState.token) {
 	defaultState.exp = extractFromToken(defaultState.token, 'exp');
@@ -51,6 +61,7 @@ interface AuthAction extends Action {
 	}
 }
 
+console.log('USING TOKEN', axios.defaults.headers['Authorization']);
 const reducer = (state = defaultState, action: AuthAction) => {
 	switch (action.type) {
 		case SET_CREDENTIALS: {
@@ -61,6 +72,7 @@ const reducer = (state = defaultState, action: AuthAction) => {
 				user: action.payload.user
 			};
 			axios.defaults.headers['Authorization'] = 'Bearer ' + <string>state.token;
+			console.log('SETTING TOKEN', axios.defaults.headers['Authorization']);
 			localStorage.setItem(TOKEN_VALUE_NAME, <string>state.token);
 			break;
 		}

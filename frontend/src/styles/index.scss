@@ -61,6 +61,10 @@ img {
 	box-shadow: none !important;
 }
 
+.btn.disabled, .btn:disabled {
+	cursor: not-allowed;
+}
+
 .clearfix::after, .clearfix::before {
 	display: table;
 	content: '';
