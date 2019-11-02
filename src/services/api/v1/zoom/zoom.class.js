@@ -57,19 +57,21 @@ exports.Zoom = class Zoom {
 		if (!query.q || !data.id) {
 			throw new BadRequest();
 		}
-		let response = {};
+		let meeting, response = {};
 		switch (query.q) {
 			case POST_QUERIES.ADD_REGISTRANT: {
 				try {
-					const meeting = await this.options.zoomMeetingsService.Model.findOne({where: {id: data.id}});
-					const hash = crypto.randomBytes(2).toString('hex');
-					response = await this.options.zoomAPI.add_registrant(meeting._id, user.email, user.firstName, hash);
-					await this.options.zoomRegistrantService.Model.create({
-						zoomMeetingId: meeting.id,
-						registrant_id: response.registrant_id,
-						join_url: response.join_url,
-						userId: user.id,
-					});
+					meeting = await this.options.zoomMeetingsService.Model.findOne({where: {id: data.id}});
+					if (meeting) {
+						const hash = crypto.randomBytes(2).toString('hex');
+						response = await this.options.zoomAPI.add_registrant(meeting._id, user.email, user.firstName, hash);
+						await this.options.zoomRegistrantService.Model.create({
+							zoomMeetingId: meeting.id,
+							registrant_id: response.registrant_id,
+							join_url: response.join_url,
+							userId: user.id,
+						});
+					}
 				} catch (err) {
 					console.log('Error when adding new registrant', err);
 					throw new BadRequest('An error occurred. Please try later.');
@@ -81,7 +83,7 @@ exports.Zoom = class Zoom {
 				try {
 				
 				} catch (err) {
-					console.log('Error when adding new registrant', err);
+					console.log('Error when removing a registrant', err);
 				}
 				break;
 			}
@@ -91,10 +93,9 @@ exports.Zoom = class Zoom {
 			}
 		}
 		console.log('data::', data);
-		if (Array.isArray(data)) {
-			return Promise.all(data.map(current => this.create(current, params)));
+		if (!meeting) {
+			throw new NotFound('Meeting not found.');
 		}
-		
 		return response;
 	}
 	

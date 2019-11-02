@@ -1,12 +1,14 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import authReducer from './auth.reducer';
 import blogReducer from './blog.reducer';
 import meetingReducer from './meeting.reducer';
+import subscriptionReducer from './subscription.reducer';
 
 export default combineReducers({
 	auth: authReducer,
 	blog: blogReducer,
-	meeting: meetingReducer
+	meeting: meetingReducer,
+	sub: subscriptionReducer
 });
 
 /*
