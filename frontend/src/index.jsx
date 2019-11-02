@@ -9,11 +9,15 @@ import { HashRouter as Router } from 'react-router-dom';
 import store from './store';
 import * as serviceWorker from './serviceWorker';
 import axios from 'axios';
-import { TOKEN_VALUE_NAME } from "./common";
 
+// configure Axios
 axios.defaults.baseURL = process.env.REACT_APP_HOST;
 axios.defaults.headers['x-request-client'] = 'WEB_APP';
 
+// create the root point for modals
+// const portal = document.createElement('div');
+// portal.setAttribute('id', 'modalRoot');
+// document.body.appendChild(portal);
 
 const output = <Provider store={store}><Router basename='/'><App/></Router></Provider>;
 let mountNode = 'appMountPoint';

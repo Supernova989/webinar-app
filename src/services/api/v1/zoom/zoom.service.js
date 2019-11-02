@@ -9,6 +9,7 @@ const service = (app) => {
 	const options = {
 		zoomAPI,
 		zoomMeetingsService: app.service('/api/v1/zoom-meetings'),
+		zoomRegistrantService: app.service('api/v1/zoom-registrants')
 	};
 	
 	app.use('/api/v1/zoom', new Zoom(options, app));

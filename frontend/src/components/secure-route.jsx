@@ -20,13 +20,13 @@ function SecureRoute({path, component, roles = [], dispatch, auth}) {
 		}
 		
 		const decoded = jwt.decode(props.auth.token);
+		
 		if (!decoded) {
 			dispatch(log_out());
 			return redirectToLogin;
 		}
 		
 		if (roles.length > 0 && roles.indexOf(decoded.role) === -1) {
-			console.log('decoded', decoded);
 			// render NoRights page
 			return <Redirect to={{
 				pathname: '/forbidden',

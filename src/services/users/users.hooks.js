@@ -79,11 +79,12 @@ module.exports = {
 		create: [
 			getStripeCustomerID(),
 			generateEmailToken(),
+			
+			// send a confirmation email
+			
 			(context) => {
-				
-				// send a confirmation email
-				// console.log('result', context.result);
-				
+				const {result: {uuid, firstName, email}} = context;
+				context.dispatch = {uuid, firstName, email};
 				return context;
 			},
 		],

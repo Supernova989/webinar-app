@@ -101,6 +101,7 @@ module.exports = function (app) {
 	users.associate = function (models) {
 		users.hasMany(models.posts);
 		users.hasMany(models.subscriptions);
+		users.hasMany(models.zoom_registrants, {onDelete: 'cascade'});
 		users.hasMany(models.email_tokens, {onDelete: 'cascade'});
 	};
 	return users;

@@ -53,6 +53,24 @@ class ZoomAPI {
 	}
 	
 	/**
+	 * Add a registrant to a meeting with the ID provided
+	 *
+	 * @param meeting_id {number}
+	 * @param first_name {string} - Registrant's first name
+	 * @param email {string} - Registrant's email
+	 * @param hash {string} - a 5 character long hash to identify the user
+	 */
+	add_registrant(meeting_id, email, first_name, hash) {
+		const url = `${this.domain}/v2/meetings/${meeting_id}/registrants`;
+		const body = JSON.stringify({
+			email,
+			first_name,
+			last_name: hash
+		});
+		return fetch(url, {method: 'post', body, headers: this.headers}).then(res => res.json());
+	}
+	
+	/**
 	 * Get a list of users registered for a meeting with the ID provided
 	 *
 	 * @param meeting_id {number}

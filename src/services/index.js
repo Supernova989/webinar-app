@@ -11,9 +11,11 @@ const apiV1StripeHooks = require('./api/v1/stripe-hooks/stripe-hooks.service.js'
 const apiV1StripeEvents = require('./api/v1/stripe-events/stripe-events.service.js');
 const apiV1ZoomHooks = require('./api/v1/zoom-hooks/zoom-hooks.service.js');
 const apiV1Settings = require('./api/v1/settings/settings.service.js');
+const apiV1ZoomRegistrants = require('./api/v1/zoom-registrants/zoom-registrants.service.js');
 
 module.exports = function (app) {
 	app.configure(users);
+	app.configure(apiV1ZoomRegistrants);
 	app.configure(apiV1ZoomMeetings);
 	app.configure(apiV1Zoom);
 	app.configure(apiV1Subscriptions);

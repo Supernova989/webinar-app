@@ -16,19 +16,10 @@ const fetchUpcomingMeetings = (zoomAPI, appInstance) => {
 		for (let meeting of meetings) {
 			const details = await zoomAPI.get_meeting_details(meeting.id);
 			if (details.host_id === config.get('zoom').zoom_host_id) { // make sure that the host is who we need
-				const found = await appInstance.service('/api/v1/zoom-meetings').Model.findOne({where: {_id: meeting.id}});
+				let found;
 				try {
-					if (found) {
-						found.topic = details.topic;
-						found.uuid = details.uuid;
-						found.agenda = details.agenda;
-						found.start_time = details.start_time;
-						found.duration = details.duration;
-						found.join_url = details.join_url;
-						found._id = details.id;
-						found.active = true;
-						await found.save();
-					} else {
+					found = await appInstance.service('/api/v1/zoom-meetings').Model.findOne({where: {_id: meeting.id, uuid: meeting.uuid}});
+					if (!found) {
 						const m = {
 							topic: details.topic,
 							uuid: details.uuid,
@@ -41,7 +32,6 @@ const fetchUpcomingMeetings = (zoomAPI, appInstance) => {
 						};
 						await appInstance.service('/api/v1/zoom-meetings').Model.create(m);
 					}
-					
 				} catch (e) {
 					errors.push(e);
 				}

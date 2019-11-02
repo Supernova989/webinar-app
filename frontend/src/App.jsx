@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Switch, Route, Redirect } from 'react-router';
 import { css, jsx } from '@emotion/core';
 import Loadable from "react-loadable";
@@ -7,6 +7,7 @@ import GridLoader from 'react-spinners/GridLoader';
 // import ws from './feathers-socket';
 import ForbiddenPage from "./pages/forbidden-page";
 import { connect } from 'react-redux';
+
 
 const LoginPage = Loadable({
 	loader: () => import('./pages/login-page'),
@@ -65,7 +66,7 @@ function App({auth}) {
 	// 	text: 'A message from a REST client'
 	// });
 	
-	
+
 	return (
 		<div className="container mt-4 inner-container">
 			<Switch>

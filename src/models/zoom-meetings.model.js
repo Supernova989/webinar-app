@@ -1,38 +1,43 @@
 const Sequelize = require('sequelize');
 const DataTypes = Sequelize.DataTypes;
+const moment = require('moment');
 
 module.exports = function (app) {
 	const sequelizeClient = app.get('sequelizeClient');
 	const zoomMeetings = sequelizeClient.define('zoom_meetings', {
-		uuid: {
-			type: DataTypes.STRING,
-			allowNull: false
-		},
-		active: {
-			type: DataTypes.BOOLEAN,
-			defaultValue: false
-		},
 		_id: {
 			type: DataTypes.INTEGER,
 			allowNull: false
 		},
-		topic: {
+		uuid: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			maxLength: 200
-		},
-		agenda: {
-			type: DataTypes.STRING,
-			allowNull: true,
-			maxLength: 2000
+			allowNull: false
 		},
 		start_time: {
-			type: DataTypes.STRING,
+			type: DataTypes.DATE,
 			allowNull: false,
 		},
 		duration: {
 			type: DataTypes.INTEGER,
 			allowNull: false
+		},
+		disabled: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false
+		},
+		topic: {
+			type: DataTypes.STRING(200),
+			allowNull: false
+		},
+		agenda: {
+			type: DataTypes.STRING(2000),
+			allowNull: true,
+		},
+		end_time: {
+			type: Sequelize.VIRTUAL(Sequelize.DATE),
+			get() {
+				return moment(this.getDataValue('start_time')).add(this.getDataValue('duration'), 'minutes').toDate()
+			}
 		},
 		join_url: {
 			type: DataTypes.STRING,
@@ -46,7 +51,7 @@ module.exports = function (app) {
 		indexes: [
 			{
 				unique: true,
-				fields: ['uuid']
+				fields: ['uuid', '_id']
 			}
 		],
 		hooks: {
@@ -57,7 +62,7 @@ module.exports = function (app) {
 	});
 	
 	zoomMeetings.associate = function (models) {
-	
+		zoomMeetings.hasMany(models.zoom_registrants);
 	};
 	
 	return zoomMeetings;

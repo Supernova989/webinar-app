@@ -62,7 +62,6 @@ function AccountPage({dispatch, meeting, ...rest}) {
 				<Route path={paths.notifications} exact component={() => <div>Notifications</div>}/>
 				<SecureRoute roles={[ROLE_ADMIN]} path={paths.management} component={() => <div>Management</div>}/>
 			</Switch>
-		
 		</>
 	)
 }

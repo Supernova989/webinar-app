@@ -44,76 +44,102 @@ exports.ZoomHooks = class ZoomHooks {
 			console.log('Error! ', e);
 		}
 
+		if (object.start_time) {
+			object.start_time = new Date(object.start_time);
+		}
+		
 		switch (data.event) {
 			case zWH_EVENT_MEETING_CREATED: {
-				const {uuid, id} = object;
-				const meeting = await zoomAPI.get_meeting_details(id);
-				console.log(`======== Meeting created (id: ${id}, uuid: ${uuid}) =========`);
-				object._id = object.id;
-				delete object.id;
-				object.join_url = meeting.join_url || 'https://zoom.us/j/' + object.id;
-				object.agenda = meeting.agenda;
-				console.log('to create:', object);
-				const zm = await this.options.zoomMeetingsService.create(object);
-				console.log('created:', zm);
+				try {
+					const {uuid, id} = object;
+					const meeting = await zoomAPI.get_meeting_details(id);
+					console.log(`======== Meeting created (id: ${id}, uuid: ${uuid}) =========`);
+					object._id = object.id;
+					delete object.id;
+					object.join_url = meeting.join_url || 'https://zoom.us/j/' + object.id;
+					object.agenda = meeting.agenda;
+					const zm = await this.options.zoomMeetingsService.create(object);
+				}
+				catch (err) {
+					console.log('Error - Zoom hook - ', err);
+				}
 				break;
 			}
 			case zWH_EVENT_MEETING_STARTED: {
-				const {uuid, id} = object;
-				console.log(`======== Meeting started (id: ${id}, uuid: ${uuid}) =========`);
-				const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id}});
-				if (zm) {
-					const result = await this.options.zoomMeetingsService.patch(zm.id, {started: true});
+				try {
+					const {uuid, id} = object;
+					console.log(`======== Meeting started (id: ${id}, uuid: ${uuid}) =========`);
+					const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id}});
+					if (zm) {
+						const result = await this.options.zoomMeetingsService.patch(zm.id, {started: true});
+					}
+				}
+				catch (err) {
+					console.log('Error - Zoom hook - ', err);
 				}
 				break;
 			}
 			case zWH_EVENT_MEETING_ENDED: {
-				const {uuid, id} = object;
-				console.log(`======== Meeting ended (id: ${id}, uuid: ${uuid}) =========`);
-				console.log('ended meeting', data);
-				const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id, uuid}});
-				const meeting = await zoomAPI.get_meeting_details(id);
-				console.log('new meeting', meeting);
-				if (zm && meeting.uuid) {
-					const result = await this.options.zoomMeetingsService.patch(zm.id, {started: false, uuid: meeting.uuid});
+				try {
+					const {uuid, id} = object;
+					console.log(`======== Meeting ended (id: ${id}, uuid: ${uuid}) =========`);
+					const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id, uuid}});
+					const meeting = await zoomAPI.get_meeting_details(id);
+					if (zm && meeting.uuid) {
+						const result = await this.options.zoomMeetingsService.patch(zm.id, {started: false, uuid: meeting.uuid});
+					}
+				}
+				catch (err) {
+					console.log('Error - Zoom hook - ', err);
 				}
 				break;
 			}
 			case zWH_EVENT_MEETING_UPDATED: {
-				const {id} = object;
-				console.log(`======== Meeting updated (id: ${id}  =========`);
-				const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id}});
-				if (zm) {
-					const updates = Object.assign({}, object);
-					delete updates.id;
-					const result = await this.options.zoomMeetingsService.patch(zm.id, updates);
+				try {
+					const {id} = object;
+					console.log(`======== Meeting updated (id: ${id}  =========`);
+					const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id}});
+					if (zm) {
+						delete object.id;
+						const result = await this.options.zoomMeetingsService.patch(zm.id, object);
+					}
+				}
+				catch (err) {
+					console.log('Error - Zoom hook - ', err);
 				}
 				break;
 			}
 			case zWH_EVENT_MEETING_DELETED: {
-				const {id} = object;
-				console.log(`======== Meeting deleted (id: ${id}  =========`);
+				try {
+					const {id} = object;
+					console.log(`======== Meeting deleted (id: ${id}  =========`);
+					const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id}});
+					zm.disabled = true;
+					await zm.save();
+				}
+				catch (err) {
+					console.log('Error - Zoom hook - ', err);
+				}
 				break;
 			}
 			case zWH_EVENT_REGISTRATION_CREATED: {
-				const {registrant, uuid, id} = object;
-				
-				console.log('======== ' + zWH_EVENT_REGISTRATION_CREATED + ' =========');
-				console.log('registrant', registrant);
-				console.log('uuid', uuid);
-				console.log('id', id);
-				
+				try {
+					const {registrant, uuid, id} = object;
+					console.log('======== ' + zWH_EVENT_REGISTRATION_CREATED + ' =========');
+					console.log('object registrant:', object);
+				}
+				catch (err) {
+					console.log('Error - Zoom hook - ', err);
+				}
 				break;
 			}
 			case zWH_EVENT_REGISTRATION_CANCELLED: {
 				try {
 					const {registrant, uuid, id} = object;
 					console.log('======== ' + zWH_EVENT_REGISTRATION_CANCELLED + ' =========');
-					console.log('registrant', registrant);
-					console.log('uuid', uuid);
-					console.log('id', id);
-				} catch (e) {
-				
+					console.log('object registrant deleted:', object);
+				} catch (err) {
+					console.log('Error - Zoom hook - ', err);
 				}
 				break;
 			}
@@ -122,7 +148,6 @@ exports.ZoomHooks = class ZoomHooks {
 				throw new BadRequest();
 			}
 		}
-		
 		return {};
 	}
 	

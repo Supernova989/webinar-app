@@ -65,6 +65,7 @@ console.log('USING TOKEN', axios.defaults.headers['Authorization']);
 const reducer = (state = defaultState, action: AuthAction) => {
 	switch (action.type) {
 		case SET_CREDENTIALS: {
+			console.log('FROM PAYLOAD', action.payload.user);
 			state = {
 				...state,
 				token: action.payload.token,

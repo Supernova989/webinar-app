@@ -20,23 +20,22 @@ module.exports = app => {
 		before: {
 			create: [
 				async (context) => {
-					const user = await context.app.service('/api/v1/users').Model.findOne({where: {email: context.data.email}});
-					
-					if (!user) {
-						return context;
+					if (context.data.strategy === 'local') {
+						const user = await context.app.service('/api/v1/users').Model.findOne({where: {email: context.data.email}});
+						if (!user) {
+							return context;
+						}
+						context.data.is_email_confirmed = user.is_email_confirmed;
+						context.data.is_active = user.is_active;
+						
+						context.params.payload = {
+							username: user.username,
+							email: user.email,
+							firstName: user.firstName,
+							lastName: user.lastName,
+							role: user.role,
+						};
 					}
-					
-					context.data.is_email_confirmed = user.is_email_confirmed;
-					context.data.is_active = user.is_active;
-					context.data.found = true;
-					
-					context.params.payload = {
-						username: user.username,
-						email: user.email,
-						firstName: user.firstName,
-						lastName: user.lastName,
-						role: user.role,
-					};
 					
 					return context;
 				}
@@ -45,12 +44,12 @@ module.exports = app => {
 		after: {
 			create: [
 				async (context) => {
-					const {result, data} = context;
-					console.log('here =>', result, data);
-					if (!data.is_email_confirmed && data.found) {
+					const {result} = context;
+					
+					if (result.user && !result.user.is_email_confirmed) {
 						throw new NotAuthenticated(ERROR_EMAIL_NOT_CONFIRMED)
 					}
-					if (!data.is_active && data.found) {
+					if (result.user && !result.user.is_active) {
 						throw new NotAuthenticated(ERROR_ACCOUNT_DEACTIVATED)
 					}
 					// override the User object
@@ -58,6 +57,7 @@ module.exports = app => {
 						username: result.user.username,
 						firstName: result.user.firstName,
 						lastName: result.user.lastName,
+						role: result.user.role,
 						email: result.user.email
 					};
 					delete context.result.authentication;

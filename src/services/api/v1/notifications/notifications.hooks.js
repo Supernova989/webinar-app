@@ -6,13 +6,13 @@ const {ROLE_ADMIN} = require('../../../../constants');
 module.exports = {
 	before: {
 		all: [],
-		find: [],
-		get: [],
-		create: [
-			// authenticate('jwt'),
-			// require_role({roles: [ROLE_ADMIN]})
+		find: [
+			authenticate('jwt'),
 		],
-		update: [
+		get: [
+			authenticate('jwt'),
+		],
+		create: [
 			authenticate('jwt'),
 			require_role({roles: [ROLE_ADMIN]})
 		],
