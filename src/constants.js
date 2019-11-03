@@ -14,4 +14,10 @@ module.exports = {
 	zWH_EVENT_MEETING_DELETED: 'meeting.deleted',
 	zWH_EVENT_REGISTRATION_CREATED: 'meeting.registration_created',
 	zWH_EVENT_REGISTRATION_CANCELLED: 'meeting.registration_cancelled',
+	zWH_EVENT_USER_CREATED: 'user.created',
+	zWH_EVENT_USER_UPDATED: 'user.updated',
+	zWH_EVENT_USER_DELETED: 'user.deleted',
+	zWH_EVENT_USER_ACTIVATED: 'user.activated',
+	zWH_EVENT_USER_DEACTIVATED: 'user.deactivated',
+	zWH_EVENT_USER_DISASSOCIATED: 'user.disassociated',
 };

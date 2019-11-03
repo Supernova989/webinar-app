@@ -80,6 +80,50 @@ class ZoomAPI {
 		const url = `${this.domain}/v2/meetings/${meeting_id}/registrants`;
 		return fetch(url, {method: 'get', headers: this.headers}).then(res => res.json());
 	}
+	
+	/**
+	 *
+	 * @param email
+	 * @param first_name
+	 * @param last_name
+	 *
+	 * @return {Promise<Object>}
+	 */
+	create_user(email, first_name, last_name) {
+		const url = `${this.domain}/v2/users`;
+		const body = JSON.stringify({
+			action: 'create',
+			user_info: {
+				email,
+				type: 1, // 1 - Basic plan
+				first_name,
+				last_name
+			}
+		});
+		return fetch(url, {method: 'post', body, headers: this.headers}).then(res => res.json());
+	}
+	
+	get_users(page = 1, size = 300) {
+		page = parseInt(page);
+		page = page > 0 ? page : 1;
+		const url = `${this.domain}/v2/users?page_size=${size}&page_number=${page}`;
+		return fetch(url, {method: 'get', headers: this.headers}).then(res => res.json());
+	}
+	
+	/**
+	 * Activates/Deactivates user's status
+	 *
+	 * @param zoom_id - Zoom User ID
+	 * @param status {boolean} - true = "activate", false = "deactivate"
+	 *
+	 * @return {Promise<null>}
+	 */
+	change_user_status(zoom_id, status) {
+		const url = `${this.domain}/v2/users/${zoom_id}/status`;
+		const action = status ? 'activate' : 'deactivate';
+		const body = JSON.stringify({action});
+		return fetch(url, {method: 'put', body, headers: this.headers});
+	}
 }
 
 module.exports.ZoomAPI = ZoomAPI;

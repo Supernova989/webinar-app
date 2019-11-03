@@ -18,7 +18,7 @@ module.exports = function (app) {
 			}
 		},
 		email: {
-			type: DataTypes.STRING(80),
+			type: DataTypes.STRING(128),
 			allowNull: false,
 			unique: true,
 			validate: {
@@ -77,6 +77,11 @@ module.exports = function (app) {
 			type: DataTypes.STRING(128),
 			unique: true,
 			allowNull: true
+		},
+		zoom_id: { // for Zoom
+			type: DataTypes.STRING(128),
+			unique: true,
+			allowNull: true,
 		},
 		password: {
 			type: DataTypes.STRING,

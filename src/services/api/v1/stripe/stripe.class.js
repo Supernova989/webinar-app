@@ -6,7 +6,19 @@ exports.Stripe = class Stripe {
 		this.stripe = this.options.stripe;
 	}
 	
+	// checks if the user has an active subscription
 	async find(params) {
+		//
+		
+		
+		/*
+		To return:
+		
+		active: false,
+		has_scheduled_cancellation: undefined,
+		scheduled_cancellation_date: undefined,
+		current_period_end: undefined
+		 */
 		return [];
 	}
 	

@@ -21,7 +21,6 @@ module.exports = function (app) {
 	});
 	
 	zoomRegistrants.associate = function (models) {
-		console.log('models',  models);
 		zoomRegistrants.belongsTo(models.zoom_meetings);
 	};
 	

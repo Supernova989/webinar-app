@@ -71,8 +71,14 @@ async function send_email(send_to, subject, html = defaultHTML, from = '"Admin" 
 	}
 }
 
+function sleep(seconds = 1000) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, seconds);
+	});
+}
 
 module.exports = {
 	log_msg: log_msg,
+	sleep,
 	send_email
 };

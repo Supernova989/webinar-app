@@ -4,7 +4,8 @@ const moment = require('moment');
 const crypto = require('crypto');
 
 const GET_ROUTES = {
-	MEETINGS: 'get_meetings'
+	MEETINGS: 'meetings',
+	ZOOM_STATUS: 'status'
 };
 const POST_QUERIES = {
 	ADD_REGISTRANT: 'add_registrant',
@@ -21,9 +22,13 @@ exports.Zoom = class Zoom {
 	}
 	
 	async get(id, params) {
+		const {user} = params;
+		if (!user) {
+			throw new NotAuthenticated();
+		}
 		let response = null;
 		switch (id) {
-			case GET_ROUTES.MEETINGS:
+			case GET_ROUTES.MEETINGS: {
 				try {
 					response = await this.options.zoomMeetingsService.Model.findAll({
 						where: {
@@ -43,6 +48,20 @@ exports.Zoom = class Zoom {
 				}
 				
 				break;
+			}
+			
+			case GET_ROUTES.ZOOM_STATUS: {
+				try {
+					response = {
+						linked: !!user.zoom_id
+					}
+				} catch (err) {
+					console.log('Error [Zoom hook] - ', err);
+				}
+				
+				break;
+			}
+			
 			default:
 				throw new NotFound();
 		}

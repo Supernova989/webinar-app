@@ -9,7 +9,14 @@ const {
 	zWH_EVENT_MEETING_ENDED,
 	zWH_EVENT_MEETING_DELETED,
 	zWH_EVENT_REGISTRATION_CREATED,
-	zWH_EVENT_REGISTRATION_CANCELLED
+	zWH_EVENT_REGISTRATION_CANCELLED,
+	zWH_EVENT_USER_CREATED,
+	zWH_EVENT_USER_UPDATED,
+	zWH_EVENT_USER_DELETED,
+	zWH_EVENT_USER_DISASSOCIATED,
+	zWH_EVENT_USER_ACTIVATED,
+	zWH_EVENT_USER_DEACTIVATED,
+	
 } = require('../../../../constants');
 
 exports.ZoomHooks = class ZoomHooks {
@@ -48,12 +55,21 @@ exports.ZoomHooks = class ZoomHooks {
 			object.start_time = new Date(object.start_time);
 		}
 		
+		console.log('========= INCOMING EVENT ============');
+		console.log(data);
+		console.log('=====================================');
+		console.log(' ');
+		
 		switch (data.event) {
 			case zWH_EVENT_MEETING_CREATED: {
+				
+				if (config.get('zoom').zoom_host_id !== object.host_id) {
+					break;
+				}
+				
 				try {
 					const {uuid, id} = object;
 					const meeting = await zoomAPI.get_meeting_details(id);
-					console.log(`======== Meeting created (id: ${id}, uuid: ${uuid}) =========`);
 					object._id = object.id;
 					delete object.id;
 					object.join_url = meeting.join_url || 'https://zoom.us/j/' + object.id;
@@ -68,7 +84,6 @@ exports.ZoomHooks = class ZoomHooks {
 			case zWH_EVENT_MEETING_STARTED: {
 				try {
 					const {uuid, id} = object;
-					console.log(`======== Meeting started (id: ${id}, uuid: ${uuid}) =========`);
 					const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id}});
 					if (zm) {
 						const result = await this.options.zoomMeetingsService.patch(zm.id, {started: true});
@@ -82,7 +97,6 @@ exports.ZoomHooks = class ZoomHooks {
 			case zWH_EVENT_MEETING_ENDED: {
 				try {
 					const {uuid, id} = object;
-					console.log(`======== Meeting ended (id: ${id}, uuid: ${uuid}) =========`);
 					const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id, uuid}});
 					const meeting = await zoomAPI.get_meeting_details(id);
 					if (zm && meeting.uuid) {
@@ -97,7 +111,6 @@ exports.ZoomHooks = class ZoomHooks {
 			case zWH_EVENT_MEETING_UPDATED: {
 				try {
 					const {id} = object;
-					console.log(`======== Meeting updated (id: ${id}  =========`);
 					const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id}});
 					if (zm) {
 						delete object.id;
@@ -112,7 +125,6 @@ exports.ZoomHooks = class ZoomHooks {
 			case zWH_EVENT_MEETING_DELETED: {
 				try {
 					const {id} = object;
-					console.log(`======== Meeting deleted (id: ${id}  =========`);
 					const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id}});
 					zm.disabled = true;
 					await zm.save();
@@ -125,8 +137,7 @@ exports.ZoomHooks = class ZoomHooks {
 			case zWH_EVENT_REGISTRATION_CREATED: {
 				try {
 					const {registrant, uuid, id} = object;
-					console.log('======== ' + zWH_EVENT_REGISTRATION_CREATED + ' =========');
-					console.log('object registrant:', object);
+					// console.log('object registrant:', object);
 				}
 				catch (err) {
 					console.log('Error - Zoom hook - ', err);
@@ -136,13 +147,75 @@ exports.ZoomHooks = class ZoomHooks {
 			case zWH_EVENT_REGISTRATION_CANCELLED: {
 				try {
 					const {registrant, uuid, id} = object;
-					console.log('======== ' + zWH_EVENT_REGISTRATION_CANCELLED + ' =========');
-					console.log('object registrant deleted:', object);
+					// console.log('object registrant deleted:', object);
 				} catch (err) {
 					console.log('Error - Zoom hook - ', err);
 				}
 				break;
 			}
+			case zWH_EVENT_USER_CREATED: {
+				
+				// Check if the user has an active subscription. If does not, deactivate his Zoom Acc.
+				
+				
+				try {
+				
+				} catch (err) {
+					console.log('Error - Zoom hook - ', err);
+				}
+				/*
+				{
+				  id: 'Jl-dLz47T12Mfdl9-egUcw',
+				  first_name: 'John',
+				  last_name: 'Doe',
+				  email: 'imax89@yandex.ru',
+				  type: 1
+				}
+				 */
+				break;
+			}
+			case zWH_EVENT_USER_DELETED: {
+				// console.log('======== ' + zWH_EVENT_USER_DELETED + ' =========');
+				// console.log(data);
+				// console.log(object);
+				try {
+					await this.options.userService.Model.update({zoom_id: null}, {where: {zoom_id: object.id}});
+				} catch (err) {
+					console.log('Error - Zoom hook - ', err);
+				}
+				break;
+			}
+			case zWH_EVENT_USER_UPDATED: {
+				// console.log('======== ' + zWH_EVENT_USER_UPDATED + ' =========');
+				// console.log(data);
+				// console.log(object);
+				try {
+				
+				} catch (err) {
+					console.log('Error - Zoom hook - ', err);
+				}
+				break;
+			}
+			case zWH_EVENT_USER_DISASSOCIATED: {
+				// console.log('======== ' + zWH_EVENT_USER_DISASSOCIATED + ' =========');
+				// console.log(data);
+				// console.log(object);
+				break;
+			}
+			case zWH_EVENT_USER_ACTIVATED: {
+				// console.log('======== ' + zWH_EVENT_USER_ACTIVATED + ' =========');
+				// console.log(data);
+				// console.log(object);
+				break;
+			}
+			case zWH_EVENT_USER_DEACTIVATED: {
+				// console.log('======== ' + zWH_EVENT_USER_DEACTIVATED + ' =========');
+				// console.log(data);
+				// console.log(object);
+				break;
+			}
+			
+			
 			default: {
 				console.log(`Unexpected Zoom event (${data.event})`);
 				throw new BadRequest();

@@ -1,14 +1,14 @@
 const {Zoom} = require('./zoom.class');
 const hooks = require('./zoom.hooks');
 const {ZoomAPI} = require('./zoom_api');
-const {fetchUpcomingMeetings} = require('./func');
+const {fetchUpcomingMeetings, initZoomUserSyncScheduler} = require('./func');
 const zoomAPI = new ZoomAPI();
-
 
 const service = (app) => {
 	const options = {
 		zoomAPI,
 		zoomMeetingsService: app.service('/api/v1/zoom-meetings'),
+		// userService: app.service('/api/v1/users'),
 		zoomRegistrantService: app.service('api/v1/zoom-registrants')
 	};
 	
@@ -18,6 +18,10 @@ const service = (app) => {
 	
 	service.fetchMeetings = () => {
 		fetchUpcomingMeetings(zoomAPI, app);
+	};
+	
+	service.zoomUserSyncScheduler = () => {
+		initZoomUserSyncScheduler(zoomAPI, app, true);
 	};
 };
 
