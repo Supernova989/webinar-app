@@ -18,7 +18,7 @@ import {
 import { Switch, Route, Redirect, withRouter } from 'react-router';
 import { AccountNavbar } from "../components/account-navbar";
 import RolePermission from "../components/role-permission";
-import MeetingsContainer from '../components/meetings-container';
+
 import {
 	ACC_NAVBAR_BILLING,
 	ACC_NAVBAR_MANAGEMENT,
@@ -27,6 +27,20 @@ import {
 	ROLE_ADMIN
 } from "../common";
 import SecureRoute from "../components/secure-route";
+import Loadable from "react-loadable";
+import { PageLoaderSpinner } from "../App";
+
+const MeetingsContainer = Loadable({
+	loader: () => import('../components/meetings-container'),
+	loading: PageLoaderSpinner,
+	delay: 300,
+});
+
+const BillingContainer = Loadable({
+	loader: () => import('../components/billing-container'),
+	loading: PageLoaderSpinner,
+	delay: 300,
+});
 
 const paths = {
 	account: '/account',
@@ -58,7 +72,7 @@ function AccountPage({dispatch, meeting, ...rest}) {
 			
 			<Switch>
 				<Route path={paths.account} exact component={MeetingsContainer}/>
-				<Route path={paths.billing} exact component={() => <div>BILLING</div>}/>
+				<Route path={paths.billing} exact component={BillingContainer}/>
 				<Route path={paths.notifications} exact component={() => <div>Notifications</div>}/>
 				<SecureRoute roles={[ROLE_ADMIN]} path={paths.management} component={() => <div>Management</div>}/>
 			</Switch>

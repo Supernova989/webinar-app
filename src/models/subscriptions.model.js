@@ -6,7 +6,8 @@ module.exports = function (app) {
 	const subscriptions = sequelizeClient.define('subscriptions', {
 		subscription_id: {
 			type: DataTypes.STRING,
-			allowNull: false
+			allowNull: false,
+			unique: true
 		},
 		has_scheduled_cancellation: {
 			type: DataTypes.BOOLEAN,
@@ -25,7 +26,7 @@ module.exports = function (app) {
 			type: DataTypes.INTEGER,
 			allowNull: false
 		},
-		cancelled: {
+		canceled: {
 			type: DataTypes.BOOLEAN,
 			allowNull: false,
 			defaultValue: false

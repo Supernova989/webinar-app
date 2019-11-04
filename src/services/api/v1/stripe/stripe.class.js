@@ -41,16 +41,18 @@ exports.Stripe = class Stripe {
 		// console.log('params', params);
 		
 		const {user} = params;
-		
-		
-		const subscriptions = await this.stripe.subscriptions.list({limit: 3, customer: user.customer_id});
-		console.log('subscriptions found:', subscriptions);
-		
-		if (subscriptions.data.length > 1) {
-			console.log('YOU ALREADY HAVE AN ACTIVE SUBSCRIPTION');
-		}
-		
 		let session_token;
+		
+		try {
+			const subscriptions = await this.stripe.subscriptions.list({limit: 3, customer: user.customer_id, status: 'active'});
+			console.log('subscriptions found:', subscriptions);
+			
+			if (subscriptions.data.length > 0) {
+				console.log('YOU ALREADY HAVE AN ACTIVE SUBSCRIPTION');
+			}
+		} catch (err) {
+			console.log('Error! ', err);
+		}
 		
 		const storedSession = await this.options.sessionService.Model.findOne({
 			where: {
@@ -93,7 +95,7 @@ exports.Stripe = class Stripe {
 		
 		return {
 			session_token,
-			publish_key: this.options.public_key
+			public_key: this.options.public_key
 		};
 		/*
 		stripe.redirectToCheckout({

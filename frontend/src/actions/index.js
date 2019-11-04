@@ -62,10 +62,24 @@ export const set_meetings = (meetings) => {
 export const fetch_meetings = () => {
 	const zoomService = getService('zoom', 1);
 	return dispatch => {
-		return zoomService.get('get_meetings')
+		return zoomService.get('meetings')
 			.then((meetings) => {
 				dispatch(set_meetings(meetings));
 			});
+	}
+};
+
+export const order_subscription = () => {
+	const stripeService = getService('stripe', 1);
+	return dispatch => {
+		return stripeService.create({}, ).then((response) => {
+			const {public_key, session_token} = response;
+			const stripe = window.Stripe(public_key);
+			stripe.redirectToCheckout({sessionId: session_token})
+				.then(({error}) => {
+					console.log('Stripe error! ', error.message);
+				});
+		});
 	}
 };
 

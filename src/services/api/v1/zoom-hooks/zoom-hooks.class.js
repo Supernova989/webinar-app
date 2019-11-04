@@ -9,7 +9,7 @@ const {
 	zWH_EVENT_MEETING_ENDED,
 	zWH_EVENT_MEETING_DELETED,
 	zWH_EVENT_REGISTRATION_CREATED,
-	zWH_EVENT_REGISTRATION_CANCELLED,
+	zWH_EVENT_REGISTRATION_CANCELED,
 	zWH_EVENT_USER_CREATED,
 	zWH_EVENT_USER_UPDATED,
 	zWH_EVENT_USER_DELETED,
@@ -141,7 +141,7 @@ exports.ZoomHooks = class ZoomHooks {
 				}
 				break;
 			}
-			case zWH_EVENT_REGISTRATION_CANCELLED: {
+			case zWH_EVENT_REGISTRATION_CANCELED: {
 				try {
 					const {registrant, uuid, id} = object;
 					// console.log('object registrant deleted:', object);
@@ -163,7 +163,7 @@ exports.ZoomHooks = class ZoomHooks {
 								required: true
 							}
 						],
-						where: {cancelled: false}
+						where: {canceled: false}
 					});
 					
 					const hasAny = subs.length > 0;

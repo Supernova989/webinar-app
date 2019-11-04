@@ -78,7 +78,7 @@ function sleep(seconds = 1000) {
 }
 
 module.exports = {
-	log_msg: log_msg,
+	log_msg,
 	sleep,
 	send_email
 };
