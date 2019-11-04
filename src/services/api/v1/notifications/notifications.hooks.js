@@ -8,6 +8,10 @@ module.exports = {
 		all: [],
 		find: [
 			authenticate('jwt'),
+			// (c) => {
+			// 	console.log('==>', c.params.user);
+			// 	return c;
+			// }
 		],
 		get: [
 			authenticate('jwt'),

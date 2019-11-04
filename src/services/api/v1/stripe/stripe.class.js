@@ -1,4 +1,7 @@
 const crypto = require('crypto');
+const {Op} = require('sequelize');
+const config = require('config');
+const moment = require('moment');
 
 exports.Stripe = class Stripe {
 	constructor(options) {
@@ -34,40 +37,73 @@ exports.Stripe = class Stripe {
 	 * @param params
 	 */
 	async create(data, params) {
-		console.log('data', data);
-		console.log('params', params);
-		
+		// console.log('data', data);
+		// console.log('params', params);
 		
 		const {user} = params;
 		
 		
-		// todo check if user already has an active recently created session
+		const subscriptions = await this.stripe.subscriptions.list({limit: 3, customer: user.customer_id});
+		console.log('subscriptions found:', subscriptions);
 		
-		const session = await this.stripe.checkout.sessions.create({
-			success_url: 'https://webinar.maximdev.com/app#/account/billing/success',
-			cancel_url: 'https://webinar.maximdev.com/app#/account/billing',
-			customer: 'cus_FueXhqC2FeYyrV', // get from the User object
-			payment_method_types: ['card'],
-			subscription_data: {
-				items: [{
-					plan: this.options.plan_id,
-					quantity: 1
-				}],
-				metadata: {
-					username: user.username
-				}
-			},
-		}, {
-			idempotency_key: this.generateHexToken(), // todo generate an idempotency key
+		if (subscriptions.data.length > 1) {
+			console.log('YOU ALREADY HAVE AN ACTIVE SUBSCRIPTION');
+		}
+		
+		let session_token;
+		
+		const storedSession = await this.options.sessionService.Model.findOne({
+			where: {
+				expiresAt: {
+					[Op.gt]: new Date()
+				},
+				userId: user.id
+			}
 		});
 		
-		// console.log('session', session);
-		// console.log('token', this.generateHexToken());
+		if (storedSession) {
+			session_token = storedSession.session_token;
+		} else {
+			const session = await this.stripe.checkout.sessions.create({
+				success_url: `${config.get('host')}/app#/account/billing?result=success`,
+				cancel_url: `${config.get('host')}/app#/account/billing?result=canceled`,
+				customer: user.customer_id,
+				payment_method_types: ['card'],
+				subscription_data: {
+					items: [{
+						plan: this.options.plan_id,
+						quantity: 1
+					}],
+					metadata: {
+						username: user.username
+					}
+				},
+			}, {
+				idempotency_key: this.generateHexToken64(),
+			});
+			
+			const expiresAt = moment().add(24, 'hours').toDate();
+			session_token = session.id;
+			await this.options.sessionService.Model.create({
+				userId: user.id,
+				session_token,
+				expiresAt // 24 hours
+			});
+		}
 		
 		return {
-			session: session.id,
+			session_token,
 			publish_key: this.options.public_key
 		};
+		/*
+		stripe.redirectToCheckout({
+			sessionId: '{{CHECKOUT_SESSION_ID}}'
+		}).then(function (result) {
+			// If `redirectToCheckout` fails due to a browser or network
+			// error, display the localized error message to your customer
+			// using `result.error.message`.
+		});
+		*/
 	}
 	
 	async update(id, data, params) {
@@ -82,7 +118,8 @@ exports.Stripe = class Stripe {
 		return {id};
 	}
 	
-	generateHexToken() {
-		return crypto.randomBytes(32).toString('hex');
+	generateHexToken64() {
+		return crypto.randomBytes(64).toString('hex');
 	}
+	
 };

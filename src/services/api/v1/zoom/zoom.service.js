@@ -8,7 +8,7 @@ const service = (app) => {
 	const options = {
 		zoomAPI,
 		zoomMeetingsService: app.service('/api/v1/zoom-meetings'),
-		// userService: app.service('/api/v1/users'),
+		userService: app.service('/api/v1/users'),
 		zoomRegistrantService: app.service('api/v1/zoom-registrants')
 	};
 	

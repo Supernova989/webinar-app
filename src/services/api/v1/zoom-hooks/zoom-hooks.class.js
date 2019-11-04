@@ -50,7 +50,7 @@ exports.ZoomHooks = class ZoomHooks {
 		} catch (e) {
 			console.log('Error! ', e);
 		}
-
+		
 		if (object.start_time) {
 			object.start_time = new Date(object.start_time);
 		}
@@ -75,8 +75,7 @@ exports.ZoomHooks = class ZoomHooks {
 					object.join_url = meeting.join_url || 'https://zoom.us/j/' + object.id;
 					object.agenda = meeting.agenda;
 					const zm = await this.options.zoomMeetingsService.create(object);
-				}
-				catch (err) {
+				} catch (err) {
 					console.log('Error - Zoom hook - ', err);
 				}
 				break;
@@ -88,8 +87,7 @@ exports.ZoomHooks = class ZoomHooks {
 					if (zm) {
 						const result = await this.options.zoomMeetingsService.patch(zm.id, {started: true});
 					}
-				}
-				catch (err) {
+				} catch (err) {
 					console.log('Error - Zoom hook - ', err);
 				}
 				break;
@@ -100,10 +98,12 @@ exports.ZoomHooks = class ZoomHooks {
 					const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id, uuid}});
 					const meeting = await zoomAPI.get_meeting_details(id);
 					if (zm && meeting.uuid) {
-						const result = await this.options.zoomMeetingsService.patch(zm.id, {started: false, uuid: meeting.uuid});
+						const result = await this.options.zoomMeetingsService.patch(zm.id, {
+							started: false,
+							uuid: meeting.uuid
+						});
 					}
-				}
-				catch (err) {
+				} catch (err) {
 					console.log('Error - Zoom hook - ', err);
 				}
 				break;
@@ -116,8 +116,7 @@ exports.ZoomHooks = class ZoomHooks {
 						delete object.id;
 						const result = await this.options.zoomMeetingsService.patch(zm.id, object);
 					}
-				}
-				catch (err) {
+				} catch (err) {
 					console.log('Error - Zoom hook - ', err);
 				}
 				break;
@@ -128,8 +127,7 @@ exports.ZoomHooks = class ZoomHooks {
 					const zm = await this.options.zoomMeetingsService.Model.findOne({where: {_id: id}});
 					zm.disabled = true;
 					await zm.save();
-				}
-				catch (err) {
+				} catch (err) {
 					console.log('Error - Zoom hook - ', err);
 				}
 				break;
@@ -138,8 +136,7 @@ exports.ZoomHooks = class ZoomHooks {
 				try {
 					const {registrant, uuid, id} = object;
 					// console.log('object registrant:', object);
-				}
-				catch (err) {
+				} catch (err) {
 					console.log('Error - Zoom hook - ', err);
 				}
 				break;
@@ -154,12 +151,25 @@ exports.ZoomHooks = class ZoomHooks {
 				break;
 			}
 			case zWH_EVENT_USER_CREATED: {
-				
-				// Check if the user has an active subscription. If does not, deactivate his Zoom Acc.
-				
-				
 				try {
-				
+					
+					const {id} = object;
+					// Check if the user has an active subscription. If does not, deactivate his Zoom Acc.
+					const subs = await this.options.subscriptionService.Model.findAll({
+						include: [
+							{
+								model: this.options.userService.Model,
+								where: {zoom_id: id},
+								required: true
+							}
+						],
+						where: {cancelled: false}
+					});
+					
+					const hasAny = subs.length > 0;
+					await zoomAPI.change_user_status(id, hasAny);
+					
+					// console.log('Subscriptions (' + subs.length + ') for user are : ', subs);
 				} catch (err) {
 					console.log('Error - Zoom hook - ', err);
 				}
@@ -197,9 +207,11 @@ exports.ZoomHooks = class ZoomHooks {
 				break;
 			}
 			case zWH_EVENT_USER_DISASSOCIATED: {
-				// console.log('======== ' + zWH_EVENT_USER_DISASSOCIATED + ' =========');
-				// console.log(data);
-				// console.log(object);
+				try {
+					await this.options.userService.Model.update({zoom_id: null}, {where: {zoom_id: object.id}});
+				} catch (err) {
+					console.log('Error - Zoom hook - ', err);
+				}
 				break;
 			}
 			case zWH_EVENT_USER_ACTIVATED: {

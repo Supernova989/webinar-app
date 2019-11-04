@@ -7,7 +7,8 @@ module.exports = function (app) {
 	const options = {
 		stripe,
 		plan_id,
-		public_key
+		public_key,
+		sessionService: app.service('/api/v1/stripe-sessions')
 	};
 	
 	app.use('/api/v1/stripe', new Stripe(options, app));

@@ -5,6 +5,7 @@ const {
 	ERROR_INVALID_EMAIL,
 	ERROR_EMAIL_DOMAIN_NOT_SUPPORTED
 } = require('../dictionary');
+const {ROLE_USER, ROLE_ASSISTANT, ROLE_ADMIN} = require('../constants');
 
 module.exports = function (app) {
 	const sequelizeClient = app.get('sequelizeClient');
@@ -68,9 +69,9 @@ module.exports = function (app) {
 		},
 		role: {
 			type: DataTypes.INTEGER,
-			defaultValue: 1,
+			defaultValue: ROLE_USER,
 			validate: {
-				is: /^[123]$/, // 'USER': 1, 'ASSISTANT': 2, 'ADMIN': 3
+				isIn: [[ROLE_USER, ROLE_ASSISTANT, ROLE_ADMIN]],
 			}
 		},
 		customer_id: { // for Stripe
@@ -106,6 +107,7 @@ module.exports = function (app) {
 	users.associate = function (models) {
 		users.hasMany(models.posts);
 		users.hasMany(models.subscriptions);
+		users.hasMany(models.stripe_sessions);
 		users.hasMany(models.zoom_registrants, {onDelete: 'cascade'});
 		users.hasMany(models.email_tokens, {onDelete: 'cascade'});
 	};

@@ -10,6 +10,7 @@ const GET_ROUTES = {
 const POST_QUERIES = {
 	ADD_REGISTRANT: 'add_registrant',
 	REMOVE_REGISTRANT: 'remove_registrant',
+	BIND: 'bind'
 };
 
 exports.Zoom = class Zoom {
@@ -73,12 +74,16 @@ exports.Zoom = class Zoom {
 		if (!user) {
 			throw new NotAuthenticated();
 		}
-		if (!query.q || !data.id) {
+		if (!query.q) {
 			throw new BadRequest();
 		}
 		let meeting, response = {};
 		switch (query.q) {
 			case POST_QUERIES.ADD_REGISTRANT: {
+				if (!data.id) {
+					throw new BadRequest('No ID provided.');
+				}
+				
 				try {
 					meeting = await this.options.zoomMeetingsService.Model.findOne({where: {id: data.id}});
 					if (meeting) {
@@ -103,6 +108,20 @@ exports.Zoom = class Zoom {
 				
 				} catch (err) {
 					console.log('Error when removing a registrant', err);
+				}
+				break;
+			}
+			
+			case POST_QUERIES.BIND: {
+				if (user.zoom_id) {
+					throw new BadRequest('User is already linked to an existing Zoom account.')
+				}
+				try {
+					const zoom_user = await this.options.zoomAPI.create_user(user.email, user.firstName, user.lastName);
+					const r = await this.options.userService.Model.update({zoom_id: zoom_user.id}, {where: {id: user.id}});
+					console.log(`user (${user.username}) updated with Zoom id ${zoom_user.id}`);
+				} catch (err) {
+					console.log('Error when binding user to Zoom account', err);
 				}
 				break;
 			}

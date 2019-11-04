@@ -63,7 +63,6 @@ exports.StripeHooks = class StripeHooks {
 					if (user.zoom_id) {
 						await zoomAPI.change_user_status(user.zoom_id, true);
 					}
-					// todo Activate the Zoom account
 				} catch (err) {
 					error = err;
 				}

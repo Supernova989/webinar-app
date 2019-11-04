@@ -16,7 +16,6 @@ module.exports = function (app) {
 		}
 	});
 	
-	// eslint-disable-next-line no-unused-vars
 	posts.associate = function (models) {
 		posts.belongsTo(models.users);
 		
