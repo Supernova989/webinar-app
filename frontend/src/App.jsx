@@ -1,35 +1,35 @@
 import React, { useEffect, useRef } from 'react';
-import { Switch, Route, Redirect } from 'react-router';
+import { Switch, Route } from 'react-router';
 import { css, jsx } from '@emotion/core';
 import Loadable from "react-loadable";
 import SecureRoute from './components/secure-route';
-import GridLoader from 'react-spinners/GridLoader';
 // import ws from './feathers-socket';
 import ForbiddenPage from "./pages/forbidden-page";
 import { connect } from 'react-redux';
+import { LoaderSpinner } from "./components/loader-spinner";
 
 
 const LoginPage = Loadable({
 	loader: () => import('./pages/login-page'),
-	loading: PageLoaderSpinner,
+	loading: LoaderSpinner,
 	delay: 300,
 });
 
 const RegisterPage = Loadable({
 	loader: () => import('./pages/register-page'),
-	loading: PageLoaderSpinner,
+	loading: LoaderSpinner,
 	delay: 300,
 });
 
 const AccountPage = Loadable({
 	loader: () => import('./pages/account-page'),
-	loading: PageLoaderSpinner,
+	loading: LoaderSpinner,
 	delay: 300,
 });
 
 const BlogPage = Loadable({
 	loader: () => import('./pages/blog-page'),
-	loading: PageLoaderSpinner,
+	loading: LoaderSpinner,
 	delay: 300,
 });
 
@@ -78,19 +78,6 @@ function App({auth}) {
 			</Switch>
 		</div>
 	);
-}
-
-export function PageLoaderSpinner(props) {
-	const {error, pastDelay} = props;
-	if (error) {
-		return <div>Error! <button onClick={props.retry}>Retry</button></div>;
-	} else if (pastDelay) {
-		return <GridLoader css={css`display: block;`}
-						   sizeUnit={"px"}
-						   color={'#6c757d'}
-						   loading={true}/>;
-	}
-	return null;
 }
 
 function mapStateToProps(state) {

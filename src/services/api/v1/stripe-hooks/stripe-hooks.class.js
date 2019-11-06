@@ -20,7 +20,7 @@ exports.StripeHooks = class StripeHooks {
 		const sig = params.headers['stripe-signature'];
 		let event;
 		try {
-			event = stripe.webhooks.constructEvent(Buffer.from(payload), sig, endpointSecret);
+			event = stripe.webhooks.constructEvent(Buffer.from(this.options.rawBody), sig, endpointSecret);
 		} catch (err) {
 			this.options.response._data.badRequest = `Webhook Error: ${err.message}`;
 			return
@@ -54,6 +54,7 @@ exports.StripeHooks = class StripeHooks {
 								where: {
 									subscription_id: subscription
 								},
+								limit: 1,
 								required: false
 							},
 							where: {
@@ -66,7 +67,6 @@ exports.StripeHooks = class StripeHooks {
 					if (user && user.subscriptions.length === 0) {
 						const {
 							id: subscription_id,
-							customer: customer_id,
 							cancel_at: scheduled_cancellation_date,
 							cancel_at_period_end: has_scheduled_cancellation,
 							billing_cycle_anchor,

@@ -1,5 +1,6 @@
 const {Forbidden, BadRequest} = require('@feathersjs/errors');
 const config = require('config');
+const {Op} = require('sequelize');
 const {ERROR_ZOOM_EP_FORBIDDEN} = require('../../../../dictionary');
 const {zoomAPI} = require('../zoom/zoom.service');
 const {
@@ -38,6 +39,7 @@ exports.ZoomHooks = class ZoomHooks {
 		// console.log("data: ", data);
 		// console.log("params: ", params);
 		// console.log("=============");
+		
 		if (!params.headers.authorization || params.headers.authorization !== config.get('zoom').webhook_secret) {
 			throw new Forbidden(ERROR_ZOOM_EP_FORBIDDEN);
 		}
@@ -62,7 +64,6 @@ exports.ZoomHooks = class ZoomHooks {
 		
 		switch (data.event) {
 			case zWH_EVENT_MEETING_CREATED: {
-				
 				if (config.get('zoom').zoom_host_id !== object.host_id) {
 					break;
 				}
@@ -152,7 +153,7 @@ exports.ZoomHooks = class ZoomHooks {
 			}
 			case zWH_EVENT_USER_CREATED: {
 				try {
-					
+					const NOW = Math.ceil(Date.now() / 1000);
 					const {id} = object;
 					// Check if the user has an active subscription. If does not, deactivate his Zoom Acc.
 					const subs = await this.options.subscriptionService.Model.findAll({
@@ -163,7 +164,12 @@ exports.ZoomHooks = class ZoomHooks {
 								required: true
 							}
 						],
-						where: {canceled: false}
+						where: {
+							canceled: false,
+							current_period_end: {
+								[Op.gt]: NOW
+							}
+						}
 					});
 					
 					const hasAny = subs.length > 0;

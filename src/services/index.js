@@ -12,8 +12,11 @@ const apiV1StripeEvents = require('./api/v1/stripe-events/stripe-events.service.
 const apiV1ZoomHooks = require('./api/v1/zoom-hooks/zoom-hooks.service.js');
 const apiV1Settings = require('./api/v1/settings/settings.service.js');
 const apiV1ZoomRegistrants = require('./api/v1/zoom-registrants/zoom-registrants.service.js');
-
 const apiV1StripeSessions = require('./api/v1/stripe-sessions/stripe-sessions.service.js');
+const apiV1ForgotPassword = require('./api/v1/forgot-password/forgot-password.service.js');
+const apiV1Reset = require('./api/v1/reset/reset.service.js');
+const apiV1Admin = require('./api/v1/admin/admin.service.js');
+
 
 module.exports = function (app) {
 	app.configure(users);
@@ -31,4 +34,7 @@ module.exports = function (app) {
 	app.configure(apiV1StripeHooks);
 	app.configure(apiV1ZoomHooks);
 	app.configure(apiV1Settings);
+	app.configure(apiV1ForgotPassword);
+	app.configure(apiV1Reset);
+	app.configure(apiV1Admin);
 };

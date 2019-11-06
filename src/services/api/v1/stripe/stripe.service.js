@@ -8,7 +8,8 @@ module.exports = function (app) {
 		stripe,
 		plan_id,
 		public_key,
-		sessionService: app.service('/api/v1/stripe-sessions')
+		sessionService: app.service('/api/v1/stripe-sessions'),
+		subscriptionService: app.service('api/v1/subscriptions')
 	};
 	
 	app.use('/api/v1/stripe', new Stripe(options, app));

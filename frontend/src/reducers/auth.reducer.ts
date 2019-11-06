@@ -24,6 +24,8 @@ export interface User {
 	firstName: string;
 	lastName: string;
 	role: number;
+	hasZoom: boolean;
+	verified: boolean;
 }
 
 interface DefaultState {
@@ -37,7 +39,7 @@ const defaultState: DefaultState = {
 	token: token,
 	exp: null,
 	user: null,
-	isFetching: false
+	isFetching: false,
 };
 
 
@@ -50,6 +52,8 @@ if (defaultState.token) {
 		role: extractFromToken(defaultState.token, 'role'),
 		firstName: extractFromToken(defaultState.token, 'firstName'),
 		lastName: extractFromToken(defaultState.token, 'lastName'),
+		hasZoom: extractFromToken(defaultState.token, 'hasZoom'),
+		verified: extractFromToken(defaultState.token, 'verified'),
 	};
 	
 }
@@ -61,7 +65,6 @@ interface AuthAction extends Action {
 	}
 }
 
-console.log('USING TOKEN', axios.defaults.headers['Authorization']);
 const reducer = (state = defaultState, action: AuthAction) => {
 	switch (action.type) {
 		case SET_CREDENTIALS: {
@@ -73,8 +76,8 @@ const reducer = (state = defaultState, action: AuthAction) => {
 				user: action.payload.user
 			};
 			axios.defaults.headers['Authorization'] = 'Bearer ' + <string>state.token;
-			console.log('SETTING TOKEN', axios.defaults.headers['Authorization']);
 			localStorage.setItem(TOKEN_VALUE_NAME, <string>state.token);
+			console.log('HERE:', state.user);
 			break;
 		}
 		case LOG_OUT: {

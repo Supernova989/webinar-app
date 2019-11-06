@@ -37,7 +37,10 @@ module.exports = function (app) {
 			{
 				unique: true,
 				fields: ['subscription_id']
-			}
+			},
+			{
+				fields: ['current_period_end']
+			},
 		],
 		hooks: {
 			beforeCount(options) {

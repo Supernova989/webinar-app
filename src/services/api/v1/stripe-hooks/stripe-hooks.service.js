@@ -14,6 +14,9 @@ module.exports = function (app) {
 			if (!res._data) {
 				res._data = {};
 			}
+			if (req.rawBody) {
+				options.rawBody = req.rawBody;
+			}
 			options.response = res;
 			next();
 		},

@@ -36,19 +36,13 @@ app.use(helmet());
 app.use(cors());
 app.use(compress());
 
-const unless = (path, middleware) => {
-	return (req, res, next) => {
-		if (path === req.path) {
-			return next();
-		} else {
-			return middleware(req, res, next);
-		}
-	};
-};
-
-// Exclude the Stripe webhook endpoint from what bodyparser affects
-app.use(unless('/api/v1/stripe-hooks', express.json()));
-// app.use(express.json());
+app.use(express.json({
+	verify: function (req, res, buf) {
+		var url = req.originalUrl;
+		if (url.startsWith('/api/v1/stripe-hooks'))
+			req.rawBody = buf;
+	}
+}));
 
 app.use(express.urlencoded({extended: true}));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));

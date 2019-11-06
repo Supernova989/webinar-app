@@ -1,12 +1,13 @@
 const {authenticate} = require('@feathersjs/authentication').hooks;
-const {BadRequest} = require('@feathersjs/errors');
+const {BadRequest, Forbidden} = require('@feathersjs/errors');
 const generateEmailToken = require('../../hooks/generate-email-token');
 const requireHeader = require('../../hooks/require-header');
 const getStripeCustomerID = require('../../hooks/get-customer-id');
 const require_role = require('../../hooks/require-role');
 const filterDataFields = require('../../hooks/filter-data-fields');
-const {ROLE_ADMIN} = require('../../constants');
 const {disallow, iff} = require('feathers-hooks-common');
+const {ROLE_ADMIN} = require('../../constants');
+const {ERROR_NO_RIGHTS} = require('../../dictionary');
 
 const {
 	hashPassword,
@@ -35,8 +36,17 @@ module.exports = {
 		get: [
 			requireHeader(),
 			authenticate('jwt'),
-			// todo only own
-			authenticate('jwt')
+			(context) => {
+				const {user} = context.params;
+				if (!user) {
+					return context;
+				}
+				const {role, id} = user;
+				if (context.params.provider === 'rest' && role !== ROLE_ADMIN && parseInt(context.id) !== id) {
+					throw new Forbidden(ERROR_NO_RIGHTS);
+				}
+				return context
+			}
 		],
 		create: [
 			requireHeader(),
@@ -47,19 +57,15 @@ module.exports = {
 				}
 				return context;
 			},
-			filterDataFields('role', 'is_active', 'is_email_confirmed'),
+			filterDataFields('role', 'is_active', 'is_email_confirmed', 'customer_id', 'zoom_id', 'uuid'),
 			hashPassword('password'),
 		],
 		update: [],
 		patch: [
 			requireHeader(),
-			/*
-			 todo:
-			   Only own and certain fields when not Admin;
-			   User cannot change his role
-			 */
 			hashPassword('password'),
-			authenticate('jwt')
+			authenticate('jwt'),
+			require_role({roles: [ROLE_ADMIN]}),
 		],
 		remove: [
 			requireHeader(),
@@ -72,9 +78,7 @@ module.exports = {
 		all: [
 			protect('password')
 		],
-		find: [
-		
-		],
+		find: [],
 		get: [],
 		create: [
 			getStripeCustomerID(),

@@ -10,11 +10,13 @@ interface ZoomMeeting {
 }
 
 interface DefaultState {
-	items: ZoomMeeting[]
+	items: ZoomMeeting[];
+	isFetching: boolean;
 }
 
 const defaultState: DefaultState = {
-	items: []
+	items: [],
+	isFetching: false
 };
 
 interface MeetingAction extends Action {

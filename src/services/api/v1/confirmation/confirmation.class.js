@@ -9,6 +9,7 @@ exports.Confirmation = class Confirmation {
 	async get(token, params) {
 		let record = null;
 		try {
+			// todo optimize
 			record = await this.options.tokenService.Model.findOne({where: {token}});
 			if (!record || record.used) {
 				this.options.response._data.notFound = true;

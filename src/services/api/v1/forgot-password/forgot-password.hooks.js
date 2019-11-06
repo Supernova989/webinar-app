@@ -1,12 +1,8 @@
 const {authenticate} = require('@feathersjs/authentication').hooks;
-const {disallow, iff} = require('feathers-hooks-common');
 
 module.exports = {
 	before: {
-		all: [
-			disallow(),
-			authenticate('jwt')
-		],
+		all: [authenticate('jwt')],
 		find: [],
 		get: [],
 		create: [],

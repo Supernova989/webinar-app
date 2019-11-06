@@ -103,10 +103,32 @@ class ZoomAPI {
 		return fetch(url, {method: 'post', body, headers: this.headers}).then(res => res.json());
 	}
 	
-	get_users(page = 1, size = 300) {
+	/**
+	 * Lists Zoom users
+	 *
+	 * @param page {number}
+	 * @param size {number}
+	 * @param status {'active'|'pending'|'inactive'}
+	 *
+	 * @return {Promise<T>}
+	 */
+	get_users(page = 1, size = 300, status = 'active') {
 		page = parseInt(page);
 		page = page > 0 ? page : 1;
-		const url = `${this.domain}/v2/users?page_size=${size}&page_number=${page}`;
+		const url = `${this.domain}/v2/users?page_size=${size}&page_number=${page}&status=${status}`;
+		return fetch(url, {method: 'get', headers: this.headers}).then(res => res.json());
+	}
+	
+	get_user(zoom_id) {
+		const url = `${this.domain}/v2/users/${zoom_id}`;
+		return fetch(url, {method: 'get', headers: this.headers}).then(res => res.json());
+	}
+	
+	check_email(email) {
+		if (!email) {
+			throw Error('EMAIL is required');
+		}
+		const url = `${this.domain}/v2/users/email?email=${email}`;
 		return fetch(url, {method: 'get', headers: this.headers}).then(res => res.json());
 	}
 	

@@ -20,8 +20,8 @@ const styles = {
 		zIndex: 10,
 		top: -21,
 		left: '50%',
-		margin: '0 0 0 -40px',
-		width: 80,
+		margin: '0 0 0 -50px',
+		width: 100,
 		textAlign: 'center',
 		background: '#FFFFFF',
 		borderRadius: '0.25em',
@@ -120,7 +120,6 @@ function RegisterPage({dispatch, history, auth}) {
 			setErrors([]);
 			dispatch(register_user(username, email, password, passwordConfirm, firstName, lastName))
 				.then((data) => {
-					console.log('====>', data);
 					// dispatch(set_credentials({token: accessToken, user}));
 					setSuccess(true);
 				})

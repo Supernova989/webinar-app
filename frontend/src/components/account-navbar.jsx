@@ -7,23 +7,26 @@ import { Nav, NavItem } from "reactstrap";
 import RolePermission from "./role-permission";
 import {
 	ROLE_ADMIN,
+	ROLE_USER,
+	ROLE_ASSISTANT,
 	ACC_NAVBAR_MEETINGS,
 	ACC_NAVBAR_BILLING,
 	ACC_NAVBAR_NOTIFICATIONS,
-	ACC_NAVBAR_MANAGEMENT
+	ACC_NAVBAR_ZOOM,
+	ACC_NAVBAR_MANAGEMENT,
 } from "../common";
 
 const TAB_ACTIVE = 'active';
 
 const styles = {
 	navbar: {
-		margin: '0 0 1rem 0',
+	
 	}
 };
 
 export function AccountNavbar({activeTab}) {
 	return (
-		<Nav tabs css={styles.navbar}>
+		<Nav tabs className="card-header-tabs" css={styles.navbar}>
 			<NavItem>
 				<Link
 					className={'nav-link ' + (activeTab === ACC_NAVBAR_MEETINGS ? TAB_ACTIVE : '')}
@@ -31,15 +34,28 @@ export function AccountNavbar({activeTab}) {
 				>Meetings
 				</Link>
 			</NavItem>
-			<NavItem>
-				
-				<Link
-					className={'nav-link ' + (activeTab === ACC_NAVBAR_BILLING ? TAB_ACTIVE : '')}
-					to='/account/billing'
-				>
-					Billing
-				</Link>
-			</NavItem>
+			
+			<RolePermission roles={[ROLE_USER, ROLE_ASSISTANT]}>
+				<NavItem>
+					<Link
+						className={'nav-link ' + (activeTab === ACC_NAVBAR_BILLING ? TAB_ACTIVE : '')}
+						to='/account/billing'
+					>
+						Billing
+					</Link>
+				</NavItem>
+			</RolePermission>
+			<RolePermission roles={[ROLE_USER, ROLE_ASSISTANT]}>
+				<NavItem>
+					<Link
+						className={'nav-link ' + (activeTab === ACC_NAVBAR_ZOOM ? TAB_ACTIVE : '')}
+						to='/account/zoom'
+					>
+						Zoom
+					</Link>
+				</NavItem>
+			</RolePermission>
+			
 			<NavItem>
 				
 				<Link
